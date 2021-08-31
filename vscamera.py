@@ -2,15 +2,18 @@ import socket
 import time
 import picamera
 
-#address = ('192.168.159.102', 65003)
+address = ('192.168.159.102', 65003)
 #address = ('20.85.215.205', 65003)
-address = ('156.67.217.141', 65003)
+#address = ('156.67.217.141', 65003)
 #address = ('52.224.63.202', 65003)
 #address = ('viewsense-rv.eastus.cloudapp.azure.com', 65003)
 ssocket = None
 connection = None
 camera = None
 
+camera = picamera.PiCamera()
+camera.resolution = (640,480)
+camera.framerate = 5
 
 while (True):
 

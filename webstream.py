@@ -48,12 +48,12 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(content)
         elif self.path == '/stream.mjpg':
-            self.send_response(200)
-            self.send_header('Age', 0)
-            self.send_header('Cache-Control', 'no-cache, private')
-            self.send_header('Pragma', 'no-cache')
-            self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=FRAME')
-            self.end_headers()
+            #self.send_response(200)
+#             self.send_header('Age', 0)
+#             self.send_header('Cache-Control', 'no-cache, private')
+#             self.send_header('Pragma', 'no-cache')
+#             self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=FRAME')
+#             self.end_headers()
             try:
                 while True:
                     with output.condition:
@@ -61,12 +61,13 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                         frame = output.frame
                         l = len(frame)
                         print(l)
-                    self.wfile.write(b'--FRAME\r\n')
-                    self.send_header('Content-Type', 'image/jpeg')
-                    self.send_header('Content-Length', l)
-                    self.end_headers()
-                    self.wfile.write(frame)
-                    self.wfile.write(b'\r\n')
+    #                     self.wfile.write(b'--FRAME\r\n')
+#                     self.send_response(200)
+#                     self.send_header('Content-Type', 'image/jpeg')
+#                     self.send_header('Content-Length', l)
+#                     self.end_headers()
+                        self.wfile.write(frame)
+#                   self.wfile.write(b'\r\n')
             except Exception as e:
                 logging.warning(
                     'Removed streaming client %s: %s',
