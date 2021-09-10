@@ -9,7 +9,7 @@ def start_camera(output):
     '''
     global camera
     if not camera:
-        camera = picamera.PiCamera(resolution='640x480', framerate = 12)
+        camera = picamera.PiCamera(resolution='640x480', framerate = 15)
         camera.start_recording(output, format='mjpeg')
         print('Camera is started')
     else:
@@ -130,7 +130,7 @@ def app(environ, start_response):
             print ('Camera Starting Error')
             print (e)
 
-    else:
+    elif (environ['QUERY_STRING'] == "stop"):
         '''
         Stop request
         '''
@@ -138,8 +138,6 @@ def app(environ, start_response):
 
         try:
             with streamCondition:
-                #streamActive = False
-                #streamCondition.wait(timeout=1)
                 # Check for active streaming
                 if (not streamCondition.wait(timeout=1)):
                     # No active streaming, stop the camera
@@ -159,4 +157,27 @@ def app(environ, start_response):
 
         except Exception as e:
             print ('Camera closing error')
+            print (e)
+
+    else:
+        '''
+        Check request
+        '''
+        print('request received: check')
+        print(environ['QUERY_STRING'])
+        data = b'OK'
+
+        try:
+            # Response
+            status = '200 OK'
+            response_headers = [
+            ('Content-type', 'image/jpeg'),
+            ]
+            start_response(status,response_headers)
+            print (environ['REMOTE_ADDR'])
+            # Return OK
+            return iter([data])
+
+        except Exception as e:
+            print ('Response error')
             print (e)
