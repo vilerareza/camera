@@ -1,0 +1,19 @@
+import asyncio
+
+server = None
+
+async def cb(reader, writer):
+    global server
+    print ('connection is reqzuested')
+    server.cancel()
+    print('server is closed')
+
+async def start_server():
+
+    global server
+    server = await asyncio.start_server(cb, '', 65001)
+
+    async with server:
+        await server.serve_forever()
+
+asyncio.run(start_server())

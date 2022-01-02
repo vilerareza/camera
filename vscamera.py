@@ -2,7 +2,7 @@ import socket
 import time
 import picamera
 
-address = ('192.168.159.102', 65003)
+address = ('192.168.2.102', 65003)
 #address = ('20.85.215.205', 65003)
 #address = ('156.67.217.141', 65003)
 #address = ('52.224.63.202', 65003)
@@ -13,8 +13,13 @@ camera = None
 
 camera = picamera.PiCamera()
 camera.resolution = (640,480)
-camera.framerate = 5
+camera.framerate = 15
 
+print('connecting')
+ssocket = socket.socket()
+ssocket.connect(address)
+
+'''
 while (True):
 
     try:
@@ -36,12 +41,15 @@ while (True):
         print('start recording')
         camera.wait_recording(300)
         print('end recording')
-        
+
+
     except Exception as e:
-        print(e)
-        print('exception')
+        pass
+        #print(e)
+        #print('exception')
 
     finally:
+        pass
         if (camera):
             try:
                 print ('ending camera')
@@ -53,7 +61,6 @@ while (True):
             finally:
                 camera.close()
                 camera = None
-                
 
         if (connection):
             try:
@@ -65,7 +72,6 @@ while (True):
             finally:
                 ssocket.close()
                 ssocket=None
-                
-
+        '''
 
 
