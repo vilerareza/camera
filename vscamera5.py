@@ -85,37 +85,6 @@ def watcher():
                     print ('watch stop')
                     break
 
-def listen_from_socket():
-    '''
-    Listen for new connection
-    '''
-    global comSocket
-    global host
-    global port
-    global sel
-    comSocket.bind((host,port))
-    comSocket.listen()
-    print('listening on, ', (host,port))
-    comSocket.setblocking(False)
-    sel.register(comSocket, selectors.EVENT_READ, data = None)
-    while True:
-        events = sel.select(timeout = None) #this blocks
-        for key, mask in events:
-            if key.data is None:
-                print('New connection accepted')
-            else:
-                print('Communication request')
-
-def start_socket_thread():
-    '''
-    Start the socket listening thread
-    '''
-    global t_socket_listen
-    if not (t_socket_listen):
-        t_socket_listen = threading.Thread(target = listen_from_socket)
-        t_socket_listen.start()
-        print('Socket thread running: '+str(t_socket_listen.is_alive()))
-
 # Camera object
 camera = None
 # Streaming output object
@@ -126,15 +95,10 @@ streamCondition = Condition()
 streamActive = False
 # watcher thread
 t_watcher = None
-# socket thread
-t_socket_listen = None
-# socket
-comSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# host, port
-host = ''
-port = 65001
 # selector for socket
 sel = selectors.DefaultSelector()
+# live thread
+t_live = None
 
 def app(environ, start_response):
     '''
@@ -144,6 +108,7 @@ def app(environ, start_response):
     global camera
     global streamActive
     global t_watcher
+    global t_live
     global audioSock
 
     if (environ['QUERY_STRING'] == "start"):
@@ -154,9 +119,11 @@ def app(environ, start_response):
 
         try:
             # Start camera
+            if not (t_live):
+                t_live = threading.Thread(target = start_camera)
+                t_live.start()
             start_camera(output)
             # Start socket
-            #start_socket_thread()
             # Response
             status = '200 OK'
             response_headers = [
