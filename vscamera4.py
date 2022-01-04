@@ -11,7 +11,7 @@ def start_camera(output):
     '''
     global camera
     if not camera:
-        camera = picamera.PiCamera(resolution='640x480', framerate = 15)
+        camera = picamera.PiCamera(resolution='640x480', framerate = 30)
         #camera.rotation = 0
         camera.start_recording(output, format='mjpeg')
         print('Camera is started')
@@ -156,7 +156,7 @@ def app(environ, start_response):
             # Start camera
             start_camera(output)
             # Start socket
-            start_socket_thread()
+            #start_socket_thread()
             # Response
             status = '200 OK'
             response_headers = [
@@ -172,8 +172,7 @@ def app(environ, start_response):
             return (frame_gen(output))
 
         except Exception as e:
-            print ('Camera Starting Error')
-            print (e)
+            print (f'{e}: Camera Starting Error')
 
     elif (environ['QUERY_STRING'] == "stop"):
         '''
