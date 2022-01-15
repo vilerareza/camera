@@ -63,11 +63,11 @@ class StreamingOutput(object):
             self.buffer.truncate()
 
             # Face detection
-            buff = np.asarray(bytearray(buffer.read()))
+            buff = np.asarray(bytearray(self.buffer.read()))
             img = imdecode(buff, 1)
             bboxes = detector.detectMultiScale(img)
             if len(bboxes)>0:   # Face detected, proceed to recognition
-            print ('face detected')
+                print ('face detected')
 
             with self.condition:
                 self.frame = self.buffer.getvalue()
