@@ -12,6 +12,7 @@ import sounddevice as sd
 from audioconnection import AudioConnection
 
 import numpy as np
+from cv2 import imdecode, imencode, rectangle, CascadeClassifier
 
 def start_camera(output, frame_size):
     '''
@@ -281,7 +282,6 @@ nStep = 50
 step = (posMax-posMin) / nStep
 servo_max_move = 1.7
 
-
 # Streaming output object
 output = StreamingOutput(frame_size = frame_size, servo_max_move = servo_max_move, move_x = (start_move_left, start_move_right))
 
@@ -293,6 +293,9 @@ detector = CascadeClassifier("haarcascade_frontalface_default.xml")
 
 # Object tracking
 enableTracking = True
+
+# Audio connection object
+audioConnection = AudioConnection()
 
 
 '''app function for wsgi'''
@@ -422,6 +425,87 @@ def app(environ, start_response):
         except Exception as e:
             print ('Response error')
             print (e)
+
+    elif (requestDict.get('audioout', '0')[0] == '1'):
+        '''
+        Start request
+        '''
+        print('request received: audioout')
+
+        data = b'OK'
+
+        try:
+            # Response
+            status = '200 OK'
+            response_headers = [
+            ('Content-type', 'text/plain'),
+            ]
+            start_response(status,response_headers)
+
+            print (environ['REMOTE_ADDR'])
+
+            audioConnection.listen_thread()
+
+            return iter([data])
+
+        except Exception as e:
+            print (f'{e}: Audio Starting Error')
+
+
+    elif (requestDict.get('audiostop', '0')[0] == '1'):
+        '''
+        Stop request
+        '''
+        print('request received: audiostop')
+
+        data = b'OK'
+
+        try:
+            # Response
+            status = '200 OK'
+            response_headers = [
+            ('Content-type', 'text/plain'),
+            ]
+            start_response(status,response_headers)
+
+            print (environ['REMOTE_ADDR'])
+
+            print ('Closing audioConnection')
+            audioConnection.close_connection()
+
+            # Return OK
+            return iter([data])
+
+        except Exception as e:
+            print (f'{e}: Audio Stopping')
+
+
+    elif (requestDict.get('audioin', '0')[0] == '1'):
+        '''
+        Audio in request
+        '''
+        print('request received: audioin')
+
+        data = b'OK'
+
+        try:
+            # Response
+            status = '200 OK'
+            response_headers = [
+            ('Content-type', 'text/plain'),
+            ]
+            start_response(status,response_headers)
+
+            print (environ['REMOTE_ADDR'])
+
+            audioConnection.listen_thread()
+            #audioConnection.create_audio_in_stream()
+
+            return iter([data])
+
+        except Exception as e:
+            print (f'{e}: Audio input starting error')
+
 
     elif (requestDict.get('check', '0')[0] == '1'):
         '''
