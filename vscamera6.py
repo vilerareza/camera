@@ -8,6 +8,9 @@ import time
 from functools import partial
 from cgi import parse_qs, escape
 
+import sounddevice as sd
+from audioconnection import AudioConnection
+
 import numpy as np
 
 def start_camera(output, frame_size):
