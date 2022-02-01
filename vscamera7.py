@@ -9,7 +9,7 @@ from functools import partial
 from cgi import parse_qs, escape
 
 import sounddevice as sd
-from audioconnection2 import AudioConnection
+from audioconnection3 import AudioConnection
 
 import numpy as np
 from cv2 import imdecode, imencode, rectangle, CascadeClassifier
@@ -21,7 +21,7 @@ def start_camera(output, frame_size):
     global camera
     if not camera:
         #camera = picamera.PiCamera(resolution='HD', framerate = 30)
-        camera = picamera.PiCamera(resolution = frame_size, framerate = 5)
+        camera = picamera.PiCamera(resolution = frame_size, framerate = 15)
         camera.rotation = 180
         camera.contrast = 0
         camera.sharpness = 50
@@ -58,7 +58,7 @@ class StreamingOutput(object):
         self.buffer = io.BytesIO()
         self.condition = Condition()
         self.detector = None
-        self.enableTracking = True
+        self.enableTracking = False
         self.servoMaxMove = servo_max_move
         self.frameSize = frame_size
         self.move_left = move_x[0]
@@ -259,7 +259,8 @@ def start_move_right(distance):
 # Camera object
 camera = None
 # Frame size
-frame_size = (320, 240)
+#frame_size = (320, 240)
+frame_size = (1280, 720)
 # Stream condition
 streamCondition = Condition()
 # is streaming active
@@ -292,7 +293,7 @@ servo_init()
 detector = CascadeClassifier("haarcascade_frontalface_default.xml")
 
 # Object tracking
-enableTracking = True
+enableTracking = False
 
 # Audio connection object
 audioConnection = AudioConnection()
@@ -444,7 +445,7 @@ def app(environ, start_response):
 
             print (environ['REMOTE_ADDR'])
 
-            audioConnection.listen(mode = 'audioout')
+            audioConnection.listen_thread(mode = 'audioout')
 
             return iter([data])
 
@@ -470,7 +471,7 @@ def app(environ, start_response):
 
             print (environ['REMOTE_ADDR'])
 
-            audioConnection.listen(mode = 'audioin')
+            audioConnection.listen_thread(mode = 'audioin')
 
             return iter([data])
 

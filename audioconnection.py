@@ -33,10 +33,10 @@ class AudioConnection():
             self.connSock, addr = self.lsock.accept()
             # ---Wait for connection---
             print ('accepted connection from ', addr)
-            #self.sockFile = self.connSock.makefile('rb')
-            self.sockFile = self.connSock.makefile('wb')
-            #self.create_audio_out_stream()
-            self.create_audio_in_stream()
+            self.sockFile = self.connSock.makefile('rb')
+            #self.sockFile = self.connSock.makefile('wb')
+            self.create_audio_out_stream()
+            #self.create_audio_in_stream()
         except Exception as e:
             print (e)
             self.close_connection()

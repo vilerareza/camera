@@ -23,7 +23,6 @@ class AudioConnection():
     def __init__(self):
         self.t_listen = Thread(target = self.__listen)
         self.condition = Condition()
-        self.sel = selectors.DefaultSelector()
 
     def __del__(self):
         print('Audio connection destructor called.........')
@@ -68,15 +67,25 @@ class AudioConnection():
             print ('closing inSock')
             self.inSock.close()
             self.inSock = None
+            self.inFile.close()
+            self.inFile = None
         if self.outSock:
-            print ('closing outSock')
-            self.outSock.close()
-            self.outSock = None
-        if self.audioOutStream:
-            with self.condition:
-                print ('notify all')
-                self.condition.notify_all()
-            self.audioOutStream = None
+            try:
+                print ('closing outSock')
+                self.outSock.close()
+                self.outFile.close()
+            except Exception as e:
+                print (e)
+            finally:
+                self.outSock = None
+                self.outFile = None
+
+        #if self.audioOutStream:
+        with self.condition:
+            print ('notify all')
+            self.condition.notify_all()
+        self.audioOutStream = None
+        self.audioInStream = None
 
     def audioOutStream_callback(self, outdata, nsample, time, status):
         if self.inFile:
@@ -105,7 +114,7 @@ class AudioConnection():
     def audioInStream_callback(self, indata, nsample, time, status):
         if self.outFile:
             try:
-                print ('OK')
+                #print ('OK')
                 self.outFile.write(indata.tobytes())
             except Exception as e:
                 print ('exception input')
