@@ -32,7 +32,7 @@ class AudioConnection():
         try:
             self.lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.lsock.bind((self.host,self.port))
-            self.lsock.listen()
+            self.lsock.listen()    # should add for timeout
             # ---Wait for connection---
             print('listening audio connection on, ', (self.host,self.port))
             if mode == 'audioin':
