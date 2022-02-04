@@ -209,7 +209,7 @@ def move_left(distance):
             pos = posMax
         else:
             pos += distance
-        print (f'pos: {pos}, step: {step}')
+        #print (f'pos: {pos}, step: {step}')
         servo1.ChangeDutyCycle(pos)
         time.sleep(0.1)
         servo1.ChangeDutyCycle(0)
@@ -239,7 +239,7 @@ def move_right(distance):
             pos = posMin
         else:
             pos -= distance
-        print (f'pos: {pos}, step: {step}')
+        #print (f'pos: {pos}, step: {step}')
         servo1.ChangeDutyCycle(pos)
         time.sleep(0.1)
         servo1.ChangeDutyCycle(0)
@@ -314,7 +314,7 @@ def app(environ, start_response):
     global frame_size
 
     requestDict = parse_qs(environ['QUERY_STRING'])
-    print (requestDict)
+   # print (requestDict)
 
     if (requestDict.get('start', '0')[0] == '1'):
         '''
@@ -511,8 +511,8 @@ def app(environ, start_response):
         '''
         Check request
         '''
-        print('request received: check')
-        print(environ['QUERY_STRING'])
+        #print('request received: check')
+        #print(environ['QUERY_STRING'])
         data = b'OK'
 
         try:
@@ -522,7 +522,7 @@ def app(environ, start_response):
             ('Content-type', 'text/plain'),
             ]
             start_response(status,response_headers)
-            print (environ['REMOTE_ADDR'])
+            #print (environ['REMOTE_ADDR'])
             # Return OK
             return iter([data])
 

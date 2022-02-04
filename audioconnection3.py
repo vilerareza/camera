@@ -10,8 +10,10 @@ from functools import partial
 class AudioConnection():
 
     host =''
-    port = 65001
-    lsock = None
+    lportout = 65001
+    lportin = 65002
+    lsockout = None
+    lsockin = None
     outSock = None
     outFile = None
     inSock = None
@@ -21,54 +23,70 @@ class AudioConnection():
     fs = 44100
 
     def __init__(self):
-        self.t_listen = Thread(target = self.__listen)
-        self.condition = Condition()
+        self.t_listen_in = Thread(target = self.__listen)
+        self.t_listen_out = Thread(target = self.__listen)
+        self.condition_out = Condition()
+        self.condition_in = Condition()
 
     def __del__(self):
         print('Audio connection destructor called.........')
 
     def __listen(self, mode):
         # Listen for new connection
-        try:
-            self.lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.lsock.bind((self.host,self.port))
-            self.lsock.listen()    # should add for timeout
-            # ---Wait for connection---
-            print('listening audio connection on, ', (self.host,self.port))
-            if mode == 'audioin':
-                self.outSock, addr = self.lsock.accept()
+        if mode == 'audioin':
+            try:
+                self.lsockout = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.lsockout.bind((self.host,self.lportout))
+                self.lsockout.listen()    # should add for timeout
+                # ---Wait for connection---
+                print('listening audio connection on, ', (self.host,self.lportout))
+                self.outSock, addr = self.lsockout.accept()
+                print ('accepted connection from ', addr)
                 self.outFile = self.outSock.makefile('wb')
+                # Create audio input stream
                 self.create_audio_in_stream()
-            elif mode =='audioout':
-                self.inSock, addr = self.lsock.accept()
-                self.inFile = self.inSock.makefile('rb')
-                self.create_audio_out_stream()
-            print ('accepted connection from ', addr)
+            except:
+                self.close_out_connection()
 
-        except Exception as e:
-            print (e)
-            self.close_connection()
+        elif mode =='audioout':
+            try:
+                self.lsockin = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.lsockin.bind((self.host,self.lportin))
+                self.lsockin.listen()    # should add for timeout
+                # ---Wait for connection---
+                print('listening audio connection on, ', (self.host,self.lportin))
+                self.inSock, addr = self.lsockin.accept()
+                print ('accepted connection from ', addr)
+                self.inFile = self.inSock.makefile('rb')
+                # Create audio output stream
+                self.create_audio_out_stream()
+            except Exception as e:
+                print (e)
+                self.close_in_connection()
 
     def listen_thread(self, mode = 'audioin'):
         # Starting the listen thread
-        if not self.t_listen.is_alive():
-            self.t_listen = Thread(target = partial(self.__listen, mode))
-            self.t_listen.start()
-            print ('socket thread is started')
-        else:
-            print ('socket thread is still alive')
+        if mode == 'audioin':
+            if not self.t_listen_in.is_alive():
+                self.t_listen_in = Thread(target = partial(self.__listen, mode))
+                self.t_listen_in.start()
+                print ('audioin thread is started')
+            else:
+                print ('audioin thread is still alive')
 
-    def close_connection(self):
-        if self.lsock:
-            print ('closing lsock')
-            self.lsock.close()
-            self.lsock = None
-        if self.inSock:
-            print ('closing inSock')
-            self.inSock.close()
-            self.inSock = None
-            self.inFile.close()
-            self.inFile = None
+        if mode == 'audioout':
+            if not self.t_listen_out.is_alive():
+                self.t_listen_out = Thread(target = partial(self.__listen, mode))
+                self.t_listen_out.start()
+                print ('audioin thread is started')
+            else:
+                print ('audioin thread is still alive')
+
+    def close_out_connection(self):
+        if self.lsockout:
+            print ('closing lsockout')
+            self.lsockout.close()
+            self.lsockout = None
         if self.outSock:
             try:
                 print ('closing outSock')
@@ -81,23 +99,42 @@ class AudioConnection():
                 self.outFile = None
 
         #if self.audioOutStream:
-        with self.condition:
+        with self.condition_out:
             print ('notify all')
-            self.condition.notify_all()
-        self.audioOutStream = None
+            self.condition_out.notify_all()
         self.audioInStream = None
+
+
+    def close_in_connection(self):
+        if self.lsockin:
+            print ('closing lsockin')
+            self.lsockin.close()
+            self.lsockin = None
+        if self.inSock:
+            print ('closing inSock')
+            self.inSock.close()
+            self.inSock = None
+            self.inFile.close()
+            self.inFile = None
+
+        #if self.audioOutStream:
+        with self.condition_in:
+            print ('notify all')
+            self.condition_in.notify_all()
+        self.audioOutStream = None
+
 
     def audioOutStream_callback(self, outdata, nsample, time, status):
         if self.inFile:
             try:
-                print ('OK')
+                #print ('OK')
                 sockData = self.inFile.read(4096)
                 temp = np.frombuffer(sockData, dtype=np.float32)
                 temp = np.reshape(temp, (1024,1))
                 outdata[:1024] = temp
             except Exception as e:
                 print (e)
-                self.close_connection()
+                self.close_in_connection()
         else:
             pass
 
@@ -107,8 +144,8 @@ class AudioConnection():
             self.audioOutStream = sd.OutputStream(callback = self.audioOutStream_callback, samplerate = self.fs, channels = 1, blocksize=1024)
 
             with self.audioOutStream:
-                with self.condition:
-                    self.condition.wait()
+                with self.condition_in:
+                    self.condition_in.wait()
                 print('audio out stream closed')
 
     def audioInStream_callback(self, indata, nsample, time, status):
@@ -119,7 +156,7 @@ class AudioConnection():
             except Exception as e:
                 print ('exception input')
                 print (e)
-                self.close_connection()
+                self.close_out_connection()
         else:
             pass
 
@@ -129,6 +166,6 @@ class AudioConnection():
             self.audioInStream = sd.InputStream(callback = self.audioInStream_callback, samplerate = self.fs, channels = 1, blocksize=1024)
 
             with self.audioInStream:
-                with self.condition:
-                    self.condition.wait()
+                with self.condition_out:
+                    self.condition_out.wait()
                 print('audio in stream closed')
