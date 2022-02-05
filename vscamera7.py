@@ -1,132 +1,12 @@
-import io
-import picamera
 from threading import Condition, Thread
-import socket
-import selectors
-import RPi.GPIO as GPIO
-import time
-from functools import partial
-from cgi import parse_qs, escape
+from cgi import parse_qs
 
-import sounddevice as sd
+from camera import Camera
+from streamingoutput import StreamingOutput
 from audioconnection3 import AudioConnection
+from servo import Servo
 
-import numpy as np
-from cv2 import imdecode, imencode, rectangle, CascadeClassifier
-
-def start_camera(output, frame_size):
-    '''
-    Camera start procedure
-    '''
-    global camera
-    if not camera:
-        #camera = picamera.PiCamera(resolution='HD', framerate = 30)
-        camera = picamera.PiCamera(resolution = frame_size, framerate = 15)
-        camera.rotation = 180
-        camera.contrast = 0
-        camera.sharpness = 50
-        camera.start_recording(output, format='mjpeg')
-        print('Camera is started')
-    else:
-        print('Camera is already started') 
-
-
-def stop_camera():
-    '''
-    Camera stop procedure
-    '''
-    global camera
-    global t_watcher
-    if camera:
-        camera.stop_recording()
-        camera.close()
-        camera = None
-        data = b'stop_ok'
-        print('Camera is stopped')
-    else:
-        print('Camera already stopped')
-        data = b'was_stop'
-    t_watcher = None   # remove stream watcher anyway
-    return data
-
-class StreamingOutput(object):
-    '''
-    Streaming output object
-    '''
-    def __init__(self, frame_size = (640, 480), servo_max_move=0, move_x = None, move_y = None):
-        self.frame = None
-        self.buffer = io.BytesIO()
-        self.condition = Condition()
-        self.detector = None
-        self.enableTracking = False
-        self.servoMaxMove = servo_max_move
-        self.frameSize = frame_size
-        self.move_left = move_x[0]
-        self.move_right = move_x[1]
-        self.move_y = move_y
-
-    def write(self, buf):
-
-        if buf.startswith(b'\xff\xd8'):
-            # New frame
-            self.buffer.truncate()
-
-            with self.condition:
-                #self.frame = self.buffer.getvalue()
-                temp = self.buffer.getvalue()
-
-                if self.enableTracking:
-                    # Object tracking enabled. Perform detection
-                    npFrame = np.asarray(bytearray(temp))
-                    if npFrame.any():
-                        img = imdecode(npFrame, 1)
-                        bboxes = detector.detectMultiScale(img)
-                        if len(bboxes)>0:   # Face detected, proceed to recognition
-                            img = self.draw_box(img, bboxes)
-                            print ('face detected. draw OK')
-                            # Movement, take bboxes[0] only?
-                            distance_x = self.calculate_move_x(center_x = self.frameSize[0]/2, bbox_x = bboxes[0][0])
-                            if distance_x > 0.1:
-                            # bbox is at left area
-                                self.move_left(abs(distance_x))
-                            elif distance_x < -0.1:
-                            # Touch is at right area
-                                self.move_right(abs(distance_x))
-                        # Encode the image back from numpy to bytes
-                        retval, img = imencode(".jpg", img)
-                        self.frame = img.tobytes()
-                        print (f'frame type: {type(self.frame)}, npFrame type: {type(npFrame)}, size: {len(npFrame)}, lenbbox : {len(bboxes)}')
-                    else:
-                        self.frame = self.buffer.getvalue()
-                else:
-                    self.frame = self.buffer.getvalue()
-
-
-                self.condition.notify_all()
-
-            self.buffer.seek(0)
-        return self.buffer.write(buf)
-
-    def enable_tracking(self, detector):
-        self.enableTracking = True
-        self.detector = detector
-
-    def disable_tracking(self, detector):
-        self.enableTracking = False
-        self.detector = None
-
-    def draw_box(self, img, boxes):
-        if boxes.any():
-            for box in boxes:
-                xb, yb, widthb, heightb = box
-                rectangle(img, (xb, yb), (xb+widthb, yb+heightb), color = (232,164,0), thickness = 3)
-        return img
-
-    def calculate_move_x(self, center_x, bbox_x):
-        distance = (((center_x) - bbox_x)/(center_x)) * self.servoMaxMove
-        print (f'move distance: {distance}, bbox_x: {bbox_x}')
-        return distance
-
+from cv2 import CascadeClassifier
 
 def frame_gen(output):
     '''
@@ -134,7 +14,6 @@ def frame_gen(output):
     '''
     global streamActive
     global streamCondition
-    global isFrameSent
     while True:
         with output.condition:
             output.condition.wait()
@@ -154,110 +33,12 @@ def watcher():
         with streamCondition:
             if (not streamCondition.wait(timeout=5)): # timeout only occur when there is no stream
                 if camera:
-                    stop_camera()
+                    camera.stop_camera()
                     print ('watch stop')
                     break
 
-
-def servo_start():
-    # Servo init
-    global servo1
-    global servo_center_pos
-
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(11,GPIO.OUT)
-    servo1 = GPIO.PWM(11,50)
-    servo1.start(0)
-    time.sleep(0.1)
-
-def servo_close():
-    # Servo cleanup
-    global servo1
-
-    servo1.stop()
-    GPIO.cleanup()
-    servo1 = None
-
-def servo_init():
-    global servo1
-    global pos
-    global servo_center_pos
-
-    servo_start()
-
-    pos = servo_center_pos
-    servo1.ChangeDutyCycle(pos)
-    time.sleep(0.3)
-    servo1.ChangeDutyCycle(0)
-    time.sleep(0.3)
-    print ('init ok')
-
-    servo_close()
-
-
-def move_left(distance):
-    global moveThread
-    global servo1
-    global pos
-    global posMax
-    global step
-    # Start servo
-    servo_start()
-    # Move servo
-    if pos < posMax:
-        if (pos + distance) >= posMax:
-            pos = posMax
-        else:
-            pos += distance
-        #print (f'pos: {pos}, step: {step}')
-        servo1.ChangeDutyCycle(pos)
-        time.sleep(0.1)
-        servo1.ChangeDutyCycle(0)
-        time.sleep(0.1)
-    moveThread = None
-    # Stop servo
-    servo_close()
-
-def start_move_left(distance):
-    global moveThread
-    # Start the move thread
-    if not moveThread:
-        moveThread = Thread(target = partial(move_left, distance))
-        moveThread.start()
-
-def move_right(distance):
-    global moveThread
-    global servo1
-    global pos
-    global posMin
-    global step
-    # Start servo
-    servo_start()
-    # Move servo
-    if pos > posMin:
-        if (pos - distance) <= posMin:
-            pos = posMin
-        else:
-            pos -= distance
-        #print (f'pos: {pos}, step: {step}')
-        servo1.ChangeDutyCycle(pos)
-        time.sleep(0.1)
-        servo1.ChangeDutyCycle(0)
-        time.sleep(0.1)
-    moveThread = None
-    # Stop servo
-    servo_close()
-
-def start_move_right(distance):
-    global moveThread
-    # Start the move thread
-    if not moveThread:
-        moveThread = Thread(target = partial(move_right, distance))
-        moveThread.start()
-
-
 # Camera object
-camera = None
+camera = Camera()
 # Frame size
 #frame_size = (320, 240)
 frame_size = (1280, 720)
@@ -267,33 +48,24 @@ streamCondition = Condition()
 streamActive = False
 # watcher thread
 t_watcher = None
-# selector for socket
-sel = selectors.DefaultSelector()
 # live thread
 t_live = None
-# move thread
-moveThread = None
-# Servo parameter
-servo1 = None
-posMin = 3
-posMax = 11
-servo_center_pos = 7
-pos = servo_center_pos
-nStep = 50
-step = (posMax-posMin) / nStep
-servo_max_move = 1.7
+# Object tracking
+enableTracking = False
 
-# Streaming output object
-output = StreamingOutput(frame_size = frame_size, servo_max_move = servo_max_move, move_x = (start_move_left, start_move_right))
+# Servo
+servo_x = Servo()
+servo_y = Servo()
 
 # Initialize the servo
-servo_init()
+servo_x.servo_init()
+servo_y.servo_init()
 
 # Detector
 detector = CascadeClassifier("haarcascade_frontalface_default.xml")
 
-# Object tracking
-enableTracking = False
+# Streaming output object
+output = StreamingOutput(frame_size = frame_size, enableTracking = enableTracking, detector = detector, servo_x = servo_x, servo_y = servo_y)
 
 # Audio connection object
 audioConnection = AudioConnection()
@@ -305,12 +77,11 @@ def app(environ, start_response):
     '''
     Application function for WSGI
     '''
-    global output
     global camera
+    global output
     global streamActive
     global t_watcher
     global t_live
-    global audioSock
     global frame_size
 
     requestDict = parse_qs(environ['QUERY_STRING'])
@@ -324,8 +95,7 @@ def app(environ, start_response):
 
         try:
             # Start camera
-            start_camera(output, frame_size = frame_size)
-            # Start socket
+            camera.start_camera(output, frame_size = frame_size)
             # Response
             status = '200 OK'
             response_headers = [
@@ -354,7 +124,8 @@ def app(environ, start_response):
                 # Check for active streaming
                 if (not streamCondition.wait(timeout=1)):
                     # No active streaming, stop the camera
-                    data = stop_camera()
+                    data = camera.stop_camera()
+                    t_watcher = None   # remove stream watcher anyway
                 else:
                     # There is active streaming, dont stop the camera
                     print('Active streaming exist, camera continue running')
@@ -384,14 +155,14 @@ def app(environ, start_response):
 
         try:
             # Move servo
-            start_move_left(distance)
+            servo_x.start_move_left(distance)
             # Response
             status = '200 OK'
             response_headers = [
             ('Content-type', 'text/plain'),
             ]
             start_response(status,response_headers)
-            print (environ['REMOTE_ADDR'])
+            #print (environ['REMOTE_ADDR'])
             # Return OK
             return iter([data])
 
@@ -412,14 +183,14 @@ def app(environ, start_response):
 
         try:
             # Move servo
-            start_move_right(distance)
+            servo_x.start_move_right(distance)
             # Response
             status = '200 OK'
             response_headers = [
             ('Content-type', 'text/plain'),
             ]
             start_response(status,response_headers)
-            print (environ['REMOTE_ADDR'])
+            #print (environ['REMOTE_ADDR'])
             # Return OK
             return iter([data])
 
@@ -432,7 +203,6 @@ def app(environ, start_response):
         Start request
         '''
         print('request received: audioout')
-
         data = b'OK'
 
         try:
@@ -442,11 +212,8 @@ def app(environ, start_response):
             ('Content-type', 'text/plain'),
             ]
             start_response(status,response_headers)
-
-            print (environ['REMOTE_ADDR'])
-
             audioConnection.listen_thread(mode = 'audioout')
-
+            # Return OK
             return iter([data])
 
         except Exception as e:
@@ -458,7 +225,6 @@ def app(environ, start_response):
         Audio in request
         '''
         print('request received: audioin')
-
         data = b'OK'
 
         try:
@@ -468,11 +234,8 @@ def app(environ, start_response):
             ('Content-type', 'text/plain'),
             ]
             start_response(status,response_headers)
-
-            print (environ['REMOTE_ADDR'])
-
             audioConnection.listen_thread(mode = 'audioin')
-
+            # Return OK
             return iter([data])
 
         except Exception as e:
@@ -484,7 +247,6 @@ def app(environ, start_response):
         Stop request
         '''
         print('request received: audiostop')
-
         data = b'OK'
 
         try:
@@ -494,12 +256,8 @@ def app(environ, start_response):
             ('Content-type', 'text/plain'),
             ]
             start_response(status,response_headers)
-
-            print (environ['REMOTE_ADDR'])
-
             print ('Closing audioConnection')
             audioConnection.close_connection()
-
             # Return OK
             return iter([data])
 
