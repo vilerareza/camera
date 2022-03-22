@@ -95,7 +95,7 @@ def app(environ, start_response):
 
         try:
             # Start camera
-            camera.start_camera(output, frame_size = frame_size)
+            camera.start_camera(output, frame_size = frame_size, frame_rate = 15)
             # Response
             status = '200 OK'
             response_headers = [
