@@ -42,6 +42,8 @@ camera = Camera()
 # Frame size
 #frame_size = (320, 240)
 frame_size = (1280, 720)
+# Frame rate
+frame_rate = 15
 # Stream condition
 streamCondition = Condition()
 # is streaming active
@@ -51,7 +53,7 @@ t_watcher = None
 # live thread
 t_live = None
 # Object tracking
-enableTracking = False
+#enableTracking = False
 
 # Servo
 servo_x = Servo()
@@ -65,7 +67,7 @@ servo_y.servo_init()
 detector = CascadeClassifier("haarcascade_frontalface_default.xml")
 
 # Streaming output object
-output = StreamingOutput(frame_size = frame_size, enableTracking = enableTracking, detector = detector, servo_x = servo_x, servo_y = servo_y)
+output = StreamingOutput(frame_size = frame_size, mode = 'normal', detector = detector, servo_x = servo_x, servo_y = servo_y)
 
 # Audio connection object
 audioConnection = AudioConnection()
@@ -83,6 +85,7 @@ def app(environ, start_response):
     global t_watcher
     global t_live
     global frame_size
+    global frame_rate
 
     requestDict = parse_qs(environ['QUERY_STRING'])
    # print (requestDict)
@@ -95,7 +98,7 @@ def app(environ, start_response):
 
         try:
             # Start camera
-            camera.start_camera(output, frame_size = frame_size, frame_rate = 15)
+            camera.start_camera(output, frame_size = frame_size, frame_rate = frame_rate)
             # Response
             status = '200 OK'
             response_headers = [

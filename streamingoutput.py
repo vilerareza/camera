@@ -2,17 +2,18 @@ import io
 from threading import Condition
 import numpy as np
 from cv2 import imdecode, imencode, rectangle
+from qr_detector import QRDetector
 
 class StreamingOutput(object):
     '''
     Streaming output object
     '''
-    def __init__(self, frame_size, enableTracking, detector, servo_x, servo_y):
+    def __init__(self, frame_size, servo_x, servo_y, mode = 'normal', detector = None):
         
         self.frame = None
         self.buffer = io.BytesIO()
         self.condition = Condition()
-        self.enableTracking = enableTracking
+        self.mode = mode
         self.detector = detector
         self.frameSize = frame_size
         self.servo_x = servo_x
@@ -25,7 +26,10 @@ class StreamingOutput(object):
             self.buffer.truncate()
             with self.condition:
 
-                if self.enableTracking:
+                if self.mode == 'normal':
+                    self.frame = self.buffer.getvalue()
+
+                elif self.mode == 'tracking':
                     # Object tracking enabled. Perform detection
                     temp = self.buffer.getvalue()
                     npFrame = np.asarray(bytearray(temp))
@@ -42,18 +46,36 @@ class StreamingOutput(object):
                                 # bbox is at left area
                                     self.servo_x.start_move_left(abs(distance_x))
                                 elif distance_x < -0.1:
-                                # Touch is at right area
+                                # bbox is at right area
                                     self.servo_x.start_move_right(abs(distance_x))
                             # Encode the image back from numpy to bytes
-                            retval, img = imencode(".jpg", img)
+                            _, img = imencode(".jpg", img)
                             self.frame = img.tobytes()
                         except Exception as e:
                             print (f'Object detection or tracking error {e}')
                             self.frame = temp
                     else:
                         self.frame = self.buffer.getvalue()
-                else:
-                    self.frame = self.buffer.getvalue()
+                
+                elif self.mode == 'qr':
+                    # Object tracking enabled. Perform detection
+                    temp = self.buffer.getvalue()
+                    npFrame = np.asarray(bytearray(temp))
+                    if npFrame.any():
+                        try:
+                            img = imdecode(npFrame, 1)
+                            img, data = QRDetector.read_qr(img)
+                            if data:
+                                print (data)
+                            # Encode the image back from numpy to bytes
+                            _, img = imencode(".jpg", img)
+                            self.frame = img.tobytes()
+                        except Exception as e:
+                            print (f'Qr detection error {e}')
+                            self.frame = temp
+                    else:
+                        self.frame = self.buffer.getvalue()
+                
                 # The frame is ready. Notify all
                 self.condition.notify_all()
 
