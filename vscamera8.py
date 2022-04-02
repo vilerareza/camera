@@ -59,10 +59,6 @@ t_live = None
 servo_x = Servo()
 servo_y = Servo()
 
-# Initialize the servo
-servo_x.servo_init()
-servo_y.servo_init()
-
 # Detector
 detector = CascadeClassifier("haarcascade_frontalface_default.xml")
 
