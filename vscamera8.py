@@ -4,7 +4,7 @@ from urllib.parse import parse_qs
 from camera import Camera
 from streamingoutput import StreamingOutput
 from audioconnection3 import AudioConnection
-from servo_ import Servo
+from servo import Servo
 
 from cv2 import CascadeClassifier
 
