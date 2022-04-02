@@ -16,7 +16,7 @@ class Servo():
 
     def __init__(self, center_position = 90) -> None:
         self.currentPos = center_position
-        kit.servo[0].angle = self.currentPos
+        self.kit.servo[0].angle = self.currentPos
         time.sleep(0.3)
         print ('init ok')
 
@@ -31,7 +31,7 @@ class Servo():
             while True:
                 if self.currentPos <= targetPos:
                     self.currentPos += 0.5
-                    kit.servo[0].angle = self.currentPos
+                    self.kit.servo[0].angle = self.currentPos
                     time.sleep(0.005)
                 else:
                     break
@@ -58,7 +58,7 @@ class Servo():
             while True:
                 if self.currentPos >= targetPos:
                     self.currentPos -= 0.5
-                    kit.servo[0].angle = self.currentPos
+                    self.kit.servo[0].angle = self.currentPos
                     time.sleep(0.005)
                 else:
                     break
