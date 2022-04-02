@@ -29,11 +29,14 @@ class Servo():
                 targetPos = self.currentPos + distance
             # Move servo
             while True:
+                self.currentPos += 0.5
                 if self.currentPos <= targetPos:
-                    self.currentPos += 0.5
                     self.kit.servo[0].angle = self.currentPos
+                    print (self.currentPos)
                     time.sleep(0.005)
                 else:
+                    self.currentPos = targetPos
+                    self.kit.servo[0].angle = self.currentPos
                     break
             self.moveThread = None
 
@@ -56,11 +59,14 @@ class Servo():
                 targetPos = self.currentPos - distance
             # Move servo
             while True:
+                self.currentPos -= 0.5
                 if self.currentPos >= targetPos:
-                    self.currentPos -= 0.5
                     self.kit.servo[0].angle = self.currentPos
+                    print (self.currentPos)
                     time.sleep(0.005)
                 else:
+                    self.currentPos = targetPos
+                    self.kit.servo[0].angle = self.currentPos
                     break
             self.moveThread = None
 
