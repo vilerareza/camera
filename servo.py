@@ -18,7 +18,7 @@ class Servo():
         self.currentPos = center_position
         self.kit.servo[0].angle = self.currentPos
         time.sleep(0.3)
-        print ('init ok')
+        print ('servo init ok')
 
     def move_left(self, distance):
         # Target position calculation
