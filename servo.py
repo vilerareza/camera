@@ -1,62 +1,45 @@
-from threading import Condition, Thread
 import time
-import RPi.GPIO as GPIO
 from functools import partial
+from threading import Thread
+from adafruit_servokit import ServoKit
 
 class Servo():
     # Servo parameter
     moveThread = None
     pwm = None
-    posMin = 3
-    posMax = 11
-    servo_center_pos = 7
-    pos = servo_center_pos  # Current position of the servo, initialized to center
-    nStep = 50
-    step = (posMax-posMin) / nStep
-    servo_max_move = 1.7
+    posMin = 0
+    posMax = 180
+    currentPos = 0
+    centerPos = 90
+    maxMove = 30
+    kit = ServoKit(channels = 16)
 
-    def __init__(self, gpio = 11) -> None:
-        self.gpio = gpio
-        
-    def servo_start(self):
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(self.gpio, GPIO.OUT)
-        self.pwm = GPIO.PWM(self.gpio,50)
-        self.pwm.start(0)
-        time.sleep(0.1)
-        
-    def servo_close(self):
-        # Servo cleanup
-        self.pwm.stop()
-        GPIO.cleanup()
-        self.pwm = None
-
-    def servo_init(self):
-        self.servo_start()
-        self.pwm.ChangeDutyCycle(self.servo_center_pos)
-        time.sleep(0.3)
-        self.pwm.ChangeDutyCycle(0)
+    def __init__(self, center_position = 90) -> None:
+        self.currentPos = center_position
+        kit.servo[0].angle = self.currentPos
         time.sleep(0.3)
         print ('init ok')
-        self.servo_close()
 
     def move_left(self, distance):
-        # Start servo
-        self.servo_start()
-        # Move servo
-        if self.pos < self.posMax:
-            if (self.pos + distance) >= self.posMax:
-                self.pos = self.posMax
+        # Target position calculation
+        if self.currentPos < self.posMax:
+            if (self.currentPos + distance) >= self.posMax:
+                targetPos = self.posMax
             else:
-                self.pos += distance
-            #print (f'pos: {pos}, step: {step}')
-            self.pwm.ChangeDutyCycle(pos)
-            time.sleep(0.1)
-            self.pwm.ChangeDutyCycle(0)
-            time.sleep(0.1)
-        self.moveThread = None
-        # Stop servo
-        self.servo_close()
+                targetPos = self.currentPos + distance
+            # Move servo
+            while True:
+                if self.currentPos <= targetPos:
+                    self.currentPos += 0.5
+                    kit.servo[0].angle = self.currentPos
+                    time.sleep(0.005)
+                else:
+                    break
+            self.moveThread = None
+
+        else:
+            # Dont move, already at max position
+            self.moveThread = None
 
     def start_move_left(self, distance):
         # Start the move thread
@@ -65,22 +48,25 @@ class Servo():
             self.moveThread.start()
 
     def move_right(self, distance):
-        # Start servo
-        self.servo_start()
-        # Move servo
-        if self.pos > self.posMin:
-            if (self.pos - distance) <= self.posMin:
-                self.pos = self.posMin
+        # Target position calculation
+        if self.currentPos > self.posMin:
+            if (self.currentPos - distance) <= self.posMin:
+                targetPos = self.posMin
             else:
-                self.pos -= distance
-            #print (f'pos: {pos}, step: {step}')
-            self.pwm.ChangeDutyCycle(self.pos)
-            time.sleep(0.1)
-            self.pwm.ChangeDutyCycle(0)
-            time.sleep(0.1)
-        self.moveThread = None
-        # Stop servo
-        self.servo_close()
+                targetPos = self.currentPos - distance
+            # Move servo
+            while True:
+                if self.currentPos >= targetPos:
+                    self.currentPos -= 0.5
+                    kit.servo[0].angle = self.currentPos
+                    time.sleep(0.005)
+                else:
+                    break
+            self.moveThread = None
+
+        else:
+            # Dont move, already at min position
+            self.moveThread = None
 
     def start_move_right(self, distance):
         # Start the move thread

@@ -98,6 +98,6 @@ class StreamingOutput(object):
         return img
 
     def calculate_move_x(self, center_x, bbox_x):
-        distance = (((center_x) - bbox_x)/(center_x)) * self.servo_x.servo_max_move
-        print (f'move distance: {distance}, bbox_x: {bbox_x}')
+        distance = (((center_x) - bbox_x)/(center_x)) * self.servo_x.maxMove
+        #print (f'move distance: {distance}, bbox_x: {bbox_x}')
         return distance
