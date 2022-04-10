@@ -10,9 +10,16 @@ def led_init():
 def led_on():
     GPIO.output(ledPin,1)
 
+def led_off():
+    GPIO.output(ledPin,0)
+
 def led_cleanup():
     GPIO.cleanup()
 
 led_init()
-led_on()
-led_cleanup()
+
+while True:
+    led_on()
+    time.sleep(20)
+    led_off()
+    time.sleep(20)
