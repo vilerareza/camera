@@ -13,4 +13,6 @@ def led_on():
 def led_cleanup():
     GPIO.cleanup()
 
+led_init()
 led_on()
+led_cleanup()
