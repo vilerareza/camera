@@ -7,7 +7,7 @@ detector = cv.QRCodeDetector()
 class QRDetector():
 
     @staticmethod
-    def read_qr(self, img):
+    def read_qr(img):
         data, points, _ = detector.detectAndDecode(img)
 
         if points is not None:
