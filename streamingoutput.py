@@ -3,7 +3,7 @@ from threading import Condition
 import numpy as np
 import cv2 as cv
 from cv2 import imdecode, imencode, rectangle
-#from qr_detector import QRDetector
+from qr_detector import QRDetector
 
 class StreamingOutput(object):
     '''
@@ -19,7 +19,7 @@ class StreamingOutput(object):
         self.frameSize = frame_size
         self.servo_x = servo_x
         self.servo_y = servo_y
-        #self.qrDetector = cv.QRCodeDetector()
+        self.qrDetector = cv.QRCodeDetector()
 
     def write(self, buf):
 
