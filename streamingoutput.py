@@ -68,13 +68,13 @@ class StreamingOutput(object):
                             img = imdecode(npFrame, 1)
                             data, points, _ = self.qrDetector.detectAndDecode(img)
 
-                            if points is not None:
-                                a, b, c, d = points[0]
-                                a_ = a.tolist()
-                                c_ = c.tolist()
-                                a_ = [int(a_[0]), int(a_[1])]
-                                c_ = [int(c_[0]), int(c_[1])]
-                                rectangle(img, a_, c_, color = (0,0,255), thickness = 2)
+                            # if points is not None:
+                            #     a, b, c, d = points[0]
+                            #     a_ = a.tolist()
+                            #     c_ = c.tolist()
+                            #     a_ = [int(a_[0]), int(a_[1])]
+                            #     c_ = [int(c_[0]), int(c_[1])]
+                            #     rectangle(img, a_, c_, color = (0,0,255), thickness = 2)
 
                             #img, data = QRDetector.read_qr(img)
                             if data:
