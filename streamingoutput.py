@@ -19,7 +19,7 @@ class StreamingOutput(object):
         self.frameSize = frame_size
         self.servo_x = servo_x
         self.servo_y = servo_y
-        self.qrDetector = cv.QRCodeDetector()
+        #self.qrDetector = cv.QRCodeDetector()
 
     def write(self, buf):
 

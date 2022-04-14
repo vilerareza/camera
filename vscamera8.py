@@ -63,7 +63,7 @@ servo_y = Servo()
 detector = CascadeClassifier("haarcascade_frontalface_default.xml")
 
 # Streaming output object
-output = StreamingOutput(frame_size = frame_size, mode = 'qr', detector = detector, servo_x = servo_x, servo_y = servo_y)
+output = StreamingOutput(frame_size = frame_size, mode = 'normal', detector = detector, servo_x = servo_x, servo_y = servo_y)
 
 # Audio connection object
 audioConnection = AudioConnection()
