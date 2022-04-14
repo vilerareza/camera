@@ -1,7 +1,6 @@
 import cv2 as cv
 from cv2 import rectangle
 
-cap = cv.VideoCapture(0)
 detector = cv.QRCodeDetector()
 
 class QRDetector():
