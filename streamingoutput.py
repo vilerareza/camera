@@ -58,7 +58,7 @@ class StreamingOutput(object):
                         self.frame = self.buffer.getvalue()
                 
                 elif self.mode == 'qr':
-                    # Object tracking enabled. Perform detection
+                    # Reading QR
                     temp = self.buffer.getvalue()
                     npFrame = np.asarray(bytearray(temp))
                     if npFrame.any():

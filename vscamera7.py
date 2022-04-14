@@ -4,7 +4,7 @@ from cgi import parse_qs
 from camera import Camera
 from streamingoutput import StreamingOutput
 from audioconnection3 import AudioConnection
-from servo import Servo
+from servo_ import Servo
 
 from cv2 import CascadeClassifier
 
