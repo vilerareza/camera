@@ -64,9 +64,9 @@ class StreamingOutput(object):
                     if npFrame.any():
                         try:
                             img = imdecode(npFrame, 1)
-                            img, data = QRDetector.read_qr(img)
-                            if data:
-                                print (data)
+                            #img, data = QRDetector.read_qr(img)
+                            #if data:
+                            #    print (data)
                             # Encode the image back from numpy to bytes
                             _, img = imencode(".jpg", img)
                             self.frame = img.tobytes()
