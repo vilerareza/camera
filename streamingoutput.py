@@ -82,6 +82,7 @@ class StreamingOutput(object):
                             # Encode the image back from numpy to bytes
                             _, img = imencode(".jpg", img)
                             self.frame = img.tobytes()
+                            print ('ok')                      
                         except Exception as e:
                             print (f'Qr detection error {e}')
                             self.frame = temp
