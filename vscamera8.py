@@ -40,8 +40,8 @@ def watcher():
 # Camera object
 camera = Camera()
 # Frame size
-#frame_size = (320, 240)
-frame_size = (1280, 720)
+frame_size = (320, 240)
+#frame_size = (1280, 720)
 # Frame rate
 frame_rate = 15
 # Stream condition
