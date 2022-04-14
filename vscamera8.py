@@ -43,7 +43,7 @@ camera = Camera()
 frame_size = (320, 240)
 #frame_size = (1280, 720)
 # Frame rate
-frame_rate = 5
+frame_rate = 15
 # Stream condition
 streamCondition = Condition()
 # is streaming active
