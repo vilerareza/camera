@@ -35,7 +35,7 @@ class StreamingOutput(object):
                 img = cv.imdecode(npFrame, 1)
                 data, _, __ = self.qrDetector.detectAndDecode(img)
                 if data:
-                    data = json.loads(data)
+                    #data = json.loads(data)
                     print (data)
                     # Stopping camera
                     self.camera.stop_camera()                     
