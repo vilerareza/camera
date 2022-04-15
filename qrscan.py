@@ -8,7 +8,7 @@ camera = Camera()
 frame_size = (320, 240)
 frame_rate = 10
 
-class StreamingOutput(object, camera):
+class StreamingOutput(object):
     # Streaming output object
     def __init__(self):
         self.buffer = io.BytesIO()
@@ -42,7 +42,7 @@ class StreamingOutput(object, camera):
                 print (f'Qr detection error {e}')
 
 # Initialize streaming output object
-output = StreamingOutput(camera)
+output = StreamingOutput()
 
 camera.start_camera(output, frame_size = frame_size, frame_rate = frame_rate)
 camera.wait_recording(60)
