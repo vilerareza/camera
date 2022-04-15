@@ -44,5 +44,5 @@ class StreamingOutput(object):
 output = StreamingOutput(camera)
 
 camera.start_camera(output, frame_size = frame_size, frame_rate = frame_rate)
-camera.wait_recording(60)
+camera.wait_recording(5)
 camera.stop_camera()
