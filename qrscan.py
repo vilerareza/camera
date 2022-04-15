@@ -1,4 +1,5 @@
 import io
+from time import sleep
 import numpy as np
 import cv2 as cv
 from camera import Camera
@@ -36,7 +37,7 @@ class StreamingOutput(object):
                 if data:
                     print (data)
                     # Stopping camera
-                    self.camera.stop_camera()                     
+                    #self.camera.stop_camera()                     
             except Exception as e:
                 print (f'Qr detection error {e}')
 
@@ -44,5 +45,6 @@ class StreamingOutput(object):
 output = StreamingOutput(camera)
 
 camera.start_camera(output, frame_size = frame_size, frame_rate = frame_rate)
-camera.wait_recording(5)
+#camera.wait_recording(5)
+sleep(5)
 camera.stop_camera()
