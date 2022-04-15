@@ -10,10 +10,10 @@ frame_rate = 10
 
 class StreamingOutput(object):
     # Streaming output object
-    def __init__(self):
+    def __init__(self, camera):
         self.buffer = io.BytesIO()
         self.qrDetector = cv.QRCodeDetector()
-        self.bufferReady = True
+        self.camera = camera
 
     def write(self, buf):
         if buf.startswith(b'\xff\xd8'):
@@ -34,15 +34,14 @@ class StreamingOutput(object):
                 img = cv.imdecode(npFrame, 1)
                 data, _, __ = self.qrDetector.detectAndDecode(img)
                 if data:
-                    #data = json.loads(data)
                     print (data)
                     # Stopping camera
-                    #camera.stop_camera()                     
+                    self.camera.stop_camera()                     
             except Exception as e:
                 print (f'Qr detection error {e}')
 
 # Initialize streaming output object
-output = StreamingOutput()
+output = StreamingOutput(camera)
 
 camera.start_camera(output, frame_size = frame_size, frame_rate = frame_rate)
 camera.wait_recording(60)
