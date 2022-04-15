@@ -20,7 +20,9 @@ class Camera():
 
     def stop_camera(self):
         if self.camera:
+            print ('stop recording')
             self.camera.stop_recording()
+            print ('closing')
             self.camera.close()
             self.camera = None
             status = b'stop_ok'
