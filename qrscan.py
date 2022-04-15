@@ -1,5 +1,5 @@
 import io
-from time import sleep
+from threading import Condition
 import numpy as np
 import cv2 as cv
 from camera import Camera
@@ -15,6 +15,7 @@ class StreamingOutput(object):
         self.buffer = io.BytesIO()
         self.qrDetector = cv.QRCodeDetector()
         self.camera = camera
+        self.qrValid = Condition()
 
     def write(self, buf):
         if buf.startswith(b'\xff\xd8'):
@@ -44,7 +45,7 @@ class StreamingOutput(object):
 # Initialize streaming output object
 output = StreamingOutput(camera)
 
-camera.start_camera(output, frame_size = frame_size, frame_rate = frame_rate)
-#camera.wait_recording(5)
-sleep(60)
-camera.stop_camera()
+with output.qrValid:
+    camera.start_camera(output, frame_size = frame_size, frame_rate = frame_rate)
+    if (not output.qrValid.wait(timeout=5)): # timeout
+        camera.stop_camera()
