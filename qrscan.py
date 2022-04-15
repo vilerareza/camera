@@ -39,8 +39,7 @@ class StreamingOutput(object):
                 img = cv.imdecode(npFrame, 1)
                 data, _, __ = self.qrDetector.detectAndDecode(img)
                 if data:
-                    print (data)
-                print ('ok')                      
+                    print (data)                     
             except Exception as e:
                 print (f'Qr detection error {e}')
         self.bufferReady = True
