@@ -38,7 +38,7 @@ class StreamingOutput(object):
                 if data:
                     print (data)
                     # Stopping camera
-                    self.camera.stop_camera()                     
+                    # self.qrValid.notify_all()                     
             except Exception as e:
                 print (f'Qr detection error {e}')
 
@@ -47,5 +47,5 @@ output = StreamingOutput(camera)
 
 with output.qrValid:
     camera.start_camera(output, frame_size = frame_size, frame_rate = frame_rate)
-    if (not output.qrValid.wait(timeout=5)): # timeout
-        camera.stop_camera()
+    output.qrValid.wait(timeout=5) # timeout
+    camera.stop_camera()
