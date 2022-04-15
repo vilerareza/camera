@@ -59,3 +59,5 @@ output = StreamingOutput()
 
 # Start camera
 camera.start_camera(output, frame_size = frame_size, frame_rate = frame_rate)
+camera.wait_recording(20)
+camera.stop_camera()

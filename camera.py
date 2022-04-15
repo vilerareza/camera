@@ -15,6 +15,9 @@ class Camera():
         else:
             print('Camera is already started') 
 
+    def wait_recording(self, time):
+        self.camera.wait_recording(time)
+
     def stop_camera(self):
         if self.camera:
             self.camera.stop_recording()
