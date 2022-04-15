@@ -1,6 +1,6 @@
 import io
-from functools import partial
-from threading import Thread
+#from functools import partial
+#from threading import Thread
 import numpy as np
 import cv2 as cv
 from camera import Camera
@@ -18,21 +18,22 @@ class StreamingOutput(object):
         self.bufferReady = True
 
     def write(self, buf):
-        if self.bufferReady:
-            if buf.startswith(b'\xff\xd8'):
-                # New frame
-                self.buffer.truncate()
-                # Reading QR
-                frame = self.buffer.getvalue()
-                t_read_qr = Thread(target = partial(self.read_qr, frame))
-                t_read_qr.start()
-                print ('ok')
-                # Reset buffer pointer
-                self.buffer.seek(0)
-            return self.buffer.write(buf)
+        #if self.bufferReady:
+        if buf.startswith(b'\xff\xd8'):
+            # New frame
+            self.buffer.truncate()
+            # Reading QR
+            frame = self.buffer.getvalue()
+            #t_read_qr = Thread(target = partial(self.read_qr, frame))
+            self.read_qr(frame)
+            #t_read_qr.start()
+            print ('ok')
+            # Reset buffer pointer
+            self.buffer.seek(0)
+        return self.buffer.write(buf)
 
     def read_qr(self, frame):
-        self.bufferReady = False
+        #self.bufferReady = False
         npFrame = np.asarray(bytearray(frame))
         if npFrame.any():
             try:
@@ -42,7 +43,7 @@ class StreamingOutput(object):
                     print (data)                     
             except Exception as e:
                 print (f'Qr detection error {e}')
-        self.bufferReady = True
+        #self.bufferReady = True
 
 # Initialize streaming output object
 output = StreamingOutput()
