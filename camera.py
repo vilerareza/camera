@@ -21,6 +21,7 @@ class Camera():
     def stop_camera(self):
         if self.camera:
             try:
+                self.camera.wait_recording(0)
                 self.camera.stop_recording()
                 self.camera.close()
                 self.camera = None
