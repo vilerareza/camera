@@ -2,19 +2,18 @@ import io
 import numpy as np
 import cv2 as cv
 from camera import Camera
-import json
+#import json
 
 camera = Camera()
 frame_size = (320, 240)
 frame_rate = 10
 
-class StreamingOutput(object):
+class StreamingOutput(object, camera):
     # Streaming output object
-    def __init__(self, camera):
+    def __init__(self):
         self.buffer = io.BytesIO()
         self.qrDetector = cv.QRCodeDetector()
         self.bufferReady = True
-        self.camera = camera
 
     def write(self, buf):
         if buf.startswith(b'\xff\xd8'):
@@ -38,7 +37,7 @@ class StreamingOutput(object):
                     #data = json.loads(data)
                     print (data)
                     # Stopping camera
-                    self.camera.stop_camera()                     
+                    #camera.stop_camera()                     
             except Exception as e:
                 print (f'Qr detection error {e}')
 
