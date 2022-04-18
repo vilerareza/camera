@@ -3,7 +3,8 @@ from threading import Condition
 import numpy as np
 import cv2 as cv
 from camera import Camera
-#import json
+from pyzbar.pyzbar import decode, ZBarSymbol
+import json
 
 camera = Camera()
 frame_size = (320, 240)
@@ -13,7 +14,6 @@ class StreamingOutput(object):
     # Streaming output object
     def __init__(self, camera):
         self.buffer = io.BytesIO()
-        self.qrDetector = cv.QRCodeDetector()
         self.camera = camera
         self.qrValid = Condition()
 
@@ -34,9 +34,11 @@ class StreamingOutput(object):
         if npFrame.any():
             try:
                 img = cv.imdecode(npFrame, 1)
-                data, _, __ = self.qrDetector.detectAndDecode(img)
-                if data:
-                    print (data)
+                qr = decode(img, symbols = [ZBarSymbol.QRCODE])
+                if len (qr) > 0:
+                    data = (qr[0].data).decode()
+                    data = json.loads(data)
+                    print(data)
                     # Stopping camera
                     with self.qrValid:
                         self.qrValid.notify_all()                     
