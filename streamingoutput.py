@@ -3,7 +3,8 @@ from threading import Condition
 import numpy as np
 import cv2 as cv
 from cv2 import imdecode, imencode, rectangle
-from qr_detector import QRDetector
+from pyzbar.pyzbar import decode, ZBarSymbol
+import json
 
 class StreamingOutput(object):
     '''
@@ -66,19 +67,11 @@ class StreamingOutput(object):
                     if npFrame.any():
                         try:
                             img = imdecode(npFrame, 1)
-                            data, points, _ = self.qrDetector.detectAndDecode(img)
-
-                            if points is not None:
-                                a, b, c, d = points[0]
-                                a_ = a.tolist()
-                                c_ = c.tolist()
-                                a_ = [int(a_[0]), int(a_[1])]
-                                c_ = [int(c_[0]), int(c_[1])]
-                                rectangle(img, a_, c_, color = (0,0,255), thickness = 2)
-
-                            #img, data = QRDetector.read_qr(img)
-                            if data:
-                                print (data)
+                            qr = decode(img, symbols = [ZBarSymbol.QRCODE])
+                            if len (qr) > 0:
+                                data = (qr[0].data).decode()
+                                data = json.loads(data)
+                                print(data)
                             # Encode the image back from numpy to bytes
                             _, img = imencode(".jpg", img)
                             self.frame = img.tobytes()
