@@ -7,7 +7,7 @@ from pyzbar.pyzbar import decode, ZBarSymbol
 import json
 
 camera = Camera()
-frame_size = (320, 240)
+frame_size = (640, 480)
 frame_rate = 10
 
 class StreamingOutput(object):
