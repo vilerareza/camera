@@ -64,7 +64,7 @@ def change_hostname(host_name, hostname_loc, hosts_loc):
     data[0] = host_name
 
     with open ('temp', 'w') as file:
-        file.write(data)
+        file.writelines(data)
     subprocess.run(['sudo', 'mv', 'temp', hostname_loc])
 
     with open (hosts_loc) as file:
@@ -72,7 +72,7 @@ def change_hostname(host_name, hostname_loc, hosts_loc):
     data[5] = '127.0.1.1    '+host_name
 
     with open ('temp', 'w') as file:
-        file.write(data)
+        file.writelines(data)
     subprocess.run(['sudo', 'mv', 'temp', hosts_loc])
 
 # Initialize streaming output object
