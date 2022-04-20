@@ -8,7 +8,8 @@ from camera import Camera
 from pyzbar.pyzbar import decode, ZBarSymbol
 import json
 
-hostNameFile = '/etc/hostname'
+hostnameFile = '/etc/hostname'
+hostsFile = '/etc/hosts'
 
 camera = Camera()
 frame_size = (640, 480)
@@ -51,15 +52,28 @@ class StreamingOutput(object):
                 print (f'Qr detection error {e}')
 
 def qr_process(qr_data):
-    change_host(host_name = qr_data['host'], host_name_loc = hostNameFile)
+    change_hostname(host_name = qr_data['host'], hostname_loc = hostnameFile, hosts_loc = hostsFile)
+    print ('Rebooting')
+    subprocess.run(['sudo', 'reboot', 'now'])
 
-def change_host(host_name, host_name_loc):
+def change_hostname(host_name, hostname_loc, hosts_loc):
+    print ('Setting host name')
+
+    with open (hostname_loc) as file:
+        data = file.readlines()
+    data[0] = host_name
+
     with open ('temp', 'w') as file:
-        file.write(host_name)
-        print ('Setting host name')
-        subprocess.run(['sudo', 'mv', 'temp', host_name_loc])
-        print ('Rebooting')
-        subprocess.run(['sudo', 'reboot', 'now'])
+        file.write(data)
+    subprocess.run(['sudo', 'mv', 'temp', hostname_loc])
+
+    with open (hosts_loc) as file:
+        data = file.readlines()
+    data[5] = '127.0.1.1    '+host_name
+
+    with open ('temp', 'w') as file:
+        file.write(data)
+    subprocess.run(['sudo', 'mv', 'temp', hosts_loc])
 
 # Initialize streaming output object
 output = StreamingOutput()
