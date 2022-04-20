@@ -1,10 +1,14 @@
+from concurrent.futures import process
 import io
 from threading import Condition
+import subprocess
 import numpy as np
 import cv2 as cv
 from camera import Camera
 from pyzbar.pyzbar import decode, ZBarSymbol
 import json
+
+hostNameFile = '/etc/hostname'
 
 camera = Camera()
 frame_size = (640, 480)
@@ -15,6 +19,7 @@ class StreamingOutput(object):
     def __init__(self):
         self.buffer = io.BytesIO()
         self.qrValid = Condition()
+        self.qrData = {}
 
     def write(self, buf):
         if buf.startswith(b'\xff\xd8'):
@@ -37,12 +42,24 @@ class StreamingOutput(object):
                 if len (qr) > 0:
                     data = (qr[0].data).decode()
                     data = json.loads(data)
-                    print(data)
+                    self.qrData = data
+                    print(self.qrData)
                     # Stopping camera
                     with self.qrValid:
                         self.qrValid.notify_all()                     
             except Exception as e:
                 print (f'Qr detection error {e}')
+
+def qr_process(qr_data):
+    change_host(host_name = qr_data['host'], host_name_loc = hostNameFile)
+
+def change_host(host_name, host_name_loc):
+    with open ('temp', 'w') as file:
+        file.write(host_name)
+        print ('Setting host name')
+        subprocess.run(['sudo', 'mv', 'temp', host_name_loc])
+        print ('Rebooting')
+        subprocess.run(['sudo', 'reboot', 'now'])
 
 # Initialize streaming output object
 output = StreamingOutput()
@@ -51,3 +68,4 @@ with output.qrValid:
     camera.start_camera(output, frame_size = frame_size, frame_rate = frame_rate)
     output.qrValid.wait(timeout=60) # timeout
     camera.stop_camera()
+    qr_process(output.qrData)
