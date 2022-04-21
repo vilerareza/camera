@@ -76,7 +76,6 @@ def set_network(wpa_loc, ssid, psk):
         file.writelines(data)
     # Replace hostname file with temp
     subprocess.run(['sudo', 'mv', 'wpa_temp', wpa_loc])
-    subprocess.run(['sudo', 'rm', 'r', 'wpa_temp'])
     
 def change_hostname(host_name, hostname_loc, hosts_loc):
     print ('Setting host name')
