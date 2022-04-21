@@ -53,7 +53,7 @@ class StreamingOutput(object):
 
 def qr_process(qr_data):
     change_hostname(host_name = qr_data['host'], hostname_loc = hostnameFile, hosts_loc = hostsFile)
-    set_network(ssid=qr_data['ssid'], psk=qr_data['psk'])
+    set_network(wpa_loc=wpaFile, ssid=qr_data['ssid'], psk=qr_data['psk'])
     print ('Rebooting')
     subprocess.run(['sudo', 'reboot', 'now'])
 
