@@ -62,7 +62,6 @@ def set_network(wpa_loc, ssid, psk):
     config_lines = [
         'network={\n'
         f'\tssid="{ssid}"\n'
-        '\tscan_ssid=1\n'
         f'\tpsk="{psk}"\n'
         '}\n\n'
     ]
