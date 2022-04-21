@@ -72,7 +72,8 @@ def set_network(wpa_loc, ssid, psk):
     with open (wpa_loc, 'r') as file:
         data = file.readlines()
     # Modify data adnd write to test file
-    data+=config_lines
+    for line in config_lines:
+        data.insert(3, line)
     with open ('wpa_temp', 'w') as file:
         file.writelines(data)
            
