@@ -60,7 +60,7 @@ def qr_process(qr_data):
 def set_network(wpa_loc, ssid, psk):
     print ('Setting network')
     config_lines = [
-        '\n',
+        '\n'
         'network={\n'
         f'\tssid="{ssid}"\n'
         '\tscan_ssid=1\n'
