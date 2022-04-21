@@ -1,4 +1,3 @@
-from concurrent.futures import process
 import io
 from threading import Condition
 import subprocess
@@ -10,6 +9,7 @@ import json
 
 hostnameFile = '/etc/hostname'
 hostsFile = '/etc/hosts'
+wpaFile = '/etc/wpa_supplicant/wpa_supplicant.conf'
 
 camera = Camera()
 frame_size = (640, 480)
@@ -53,26 +53,47 @@ class StreamingOutput(object):
 
 def qr_process(qr_data):
     change_hostname(host_name = qr_data['host'], hostname_loc = hostnameFile, hosts_loc = hostsFile)
+    set_network(ssid=qr_data['ssid'], psk=qr_data['psk'])
     print ('Rebooting')
     subprocess.run(['sudo', 'reboot', 'now'])
 
+def set_network(wpa_loc, ssid, psk):
+    print ('Setting network')
+    config_lines = [
+        '\n',
+        'network={'
+        f'\tssid="{ssid}"'
+        '\tscan_ssid=1'
+        f'\tpsk="{psk}"'
+        '\tpriority=2'
+    ]
+    # Read wpa file original content
+    with open (wpa_loc, 'r') as file:
+        data = file.readlines()
+    # Modify data adnd write to test file
+    data[-1]=config_lines
+    with open ('wpa_temp', 'w') as file:
+        file.writelines(data)
+           
 def change_hostname(host_name, hostname_loc, hosts_loc):
     print ('Setting host name')
-
-    with open (hostname_loc) as file:
+    # Read hostname original content
+    with open (hostname_loc, 'r') as file:
         data = file.readlines()
+    # modify data and write to temp file
     data[0] = host_name
-
     with open ('temp', 'w') as file:
         file.writelines(data)
+    # Replace hostname file with temp
     subprocess.run(['sudo', 'mv', 'temp', hostname_loc])
-
+    # Read hosts original content
     with open (hosts_loc) as file:
         data = file.readlines()
+    # modify data and write to temp file
     data[5] = '127.0.1.1    '+host_name
-
     with open ('temp', 'w') as file:
         file.writelines(data)
+    # Replace hosts file with temp
     subprocess.run(['sudo', 'mv', 'temp', hosts_loc])
 
 # Initialize streaming output object
