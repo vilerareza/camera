@@ -61,11 +61,10 @@ def set_network(wpa_loc, ssid, psk):
     print ('Setting network')
     config_lines = [
         '\n',
-        'network={\n'
-        f'\tssid="{ssid}"\n'
-        '\tscan_ssid=1\n'
-        f'\tpsk="{psk}"\n'
-        '\tpriority=2\n'
+        'network={\n',
+        f'\tssid="{ssid}"\n',
+        '\tscan_ssid=1\n',
+        f'\tpsk="{psk}"\n\n',
         '}'
     ]
     # Read wpa file original content
