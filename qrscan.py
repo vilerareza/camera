@@ -64,7 +64,7 @@ def set_network(wpa_loc, ssid, psk):
         f'\tssid="{ssid}"\n'
         '\tscan_ssid=1\n'
         f'\tpsk="{psk}"\n'
-        '}'
+        '}\n\n'
     ]
     # Read wpa file original content
     with open (wpa_loc, 'r') as file:
