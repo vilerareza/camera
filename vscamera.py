@@ -19,7 +19,7 @@ print('connecting')
 ssocket = socket.socket()
 ssocket.connect(address)
 
-'''
+
 while (True):
 
     try:
