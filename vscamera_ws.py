@@ -3,6 +3,8 @@ from streamingoutput_basic import StreamingOutput
 import asyncio
 import websockets
 
+# Server host
+serverHost = "192.168.4.102:8000"
 # Camera object
 camera = Camera()
 # Frame size
@@ -13,7 +15,7 @@ frame_rate = 5
 output = StreamingOutput()
 
 async def connect():
-    async with websockets.connect("ws://localhost:8000/ws/") as websocket:
+    async with websockets.connect(f"ws://{serverHost}/ws/") as websocket:
         while True:
             with output.condition:
                 output.condition.wait()
