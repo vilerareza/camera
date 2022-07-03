@@ -20,7 +20,7 @@ async def connect():
             with output.condition:
                 output.condition.wait()
                 frame = output.frame
-                websocket.send_binary(frame)
+                websocket.send(frame)
 
 try:
     # Start camera
