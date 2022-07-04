@@ -6,7 +6,7 @@ import selectors
 import RPi.GPIO as GPIO
 import time
 from functools import partial
-from cgi import parse_qs, escape
+from urllib.parse import parse_qs
 
 import numpy as np
 

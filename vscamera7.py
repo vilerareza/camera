@@ -1,5 +1,5 @@
 from threading import Condition, Thread
-from cgi import parse_qs
+from urllib.parse import parse_qs
 
 from camera import Camera
 from streamingoutput import StreamingOutput
