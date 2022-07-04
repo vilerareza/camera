@@ -10,7 +10,7 @@ camera = Camera()
 # Frame size
 frame_size = (640, 480)
 # Frame rate
-frame_rate = 5
+frame_rate = 1
 # Streaming output object
 output = StreamingOutput()
 
