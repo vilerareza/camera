@@ -21,7 +21,7 @@ def start_camera(output, frame_size):
     global camera
     if not camera:
         #camera = picamera.PiCamera(resolution='HD', framerate = 30)
-        camera = picamera.PiCamera(resolution = frame_size, framerate = 5)
+        camera = picamera.PiCamera(resolution = frame_size, framerate = 1)
         camera.rotation = 180
         camera.contrast = 0
         camera.sharpness = 50
