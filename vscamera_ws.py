@@ -15,7 +15,7 @@ frame_rate = 5
 output = StreamingOutput()
 
 async def connect():
-    async with websockets.connect(f"ws://{serverHost}/ws/") as websocket:
+    async with websockets.connect(f"ws://{serverHost}/ws/device1/") as websocket:
         while True:
             with output.condition:
                 output.condition.wait()
