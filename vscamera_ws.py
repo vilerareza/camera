@@ -28,12 +28,15 @@ try:
     # Start camera
     camera.start_camera(output, frame_size = frame_size, frame_rate = frame_rate)
     
-    wsapp = websocket.WebSocketApp(f"ws://{serverHost}/ws/device1/")
+    #wsapp = websocket.WebSocketApp(f"ws://{serverHost}/ws/device1/")
+    ws = websocket.WebSocket()
+    ws.connect(f"ws://{serverHost}/ws/device1/")
+
     while True:
         with output.condition:
             output.condition.wait()
             frame = output.frame
-            wsapp.send(frame, opcode=2)
+            ws.send(frame, opcode=2)
     # # Start thread for stream watcher
     # if not (t_watcher):
     #     t_watcher = Thread(target = watcher)
