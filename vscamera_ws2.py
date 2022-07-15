@@ -27,7 +27,7 @@ try:
     def run():
         # Start the websocket connection
         print ('run')
-        #time.sleep(0.3) # Without this delay the websocket callback will not run
+        time.sleep(0.3) # Without this delay the websocket callback will not run
         wsapp.run_forever()
 
     try:
@@ -41,7 +41,7 @@ try:
     finally:
         # Close the websocket connection
         print ('closing connection')
-        wsapp.close()
+        #wsapp.close()
 
     # while True:
     #     with output.condition:
