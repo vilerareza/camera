@@ -5,7 +5,7 @@ import websockets
 import websocket
 
 # Server host
-serverHost = "192.168.4.102:8000"
+serverHost = "192.168.25.102:8000"
 # Camera object
 camera = Camera()
 # Frame size
