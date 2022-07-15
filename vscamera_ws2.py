@@ -23,32 +23,33 @@ try:
     camera.start_camera(output, frame_size = frame_size, frame_rate = frame_rate)
     
     wsapp = websocket.WebSocketApp(f"ws://{serverHost}/ws/device1/", on_message=on_message)
-    #wsapp.run_forever()
+    wsapp.run_forever()
+    print ('done')
 
-    def run():
-        # Start the websocket connection
-        print ('run')
-        time.sleep(1) # Without this delay the websocket callback will not run
-        wsapp.run_forever()
-        print ('run exit')
-    try:
-        # Start the websocket connection in new thread
-        wst = Thread(target = run)
-        wst.daemon = True
-        wst.start()
-    except Exception as e:
-        print (f'{e}: Failed starting websocket connection')
-        wst = None
-    finally:
-        # Close the websocket connection
-        print ('closing connection')
-        wsapp.close()
+    # def run():
+    #     # Start the websocket connection
+    #     print ('run')
+    #     time.sleep(1) # Without this delay the websocket callback will not run
+    #     wsapp.run_forever()
+    #     print ('run exit')
+    # try:
+    #     # Start the websocket connection in new thread
+    #     wst = Thread(target = run)
+    #     wst.daemon = True
+    #     wst.start()
+    # except Exception as e:
+    #     print (f'{e}: Failed starting websocket connection')
+    #     wst = None
+    # finally:
+    #     # Close the websocket connection
+    #     print ('closing connection')
+    #     wsapp.close()
 
-    while True:
-        with output.condition:
-            output.condition.wait()
-            frame = output.frame
-            wsapp.send(frame, opcode=2)
+    # while True:
+    #     with output.condition:
+    #         output.condition.wait()
+    #         frame = output.frame
+    #         wsapp.send(frame, opcode=2)
 
 except Exception as e:
     print (f'{e}: Camera Starting Error')
