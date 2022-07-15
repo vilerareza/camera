@@ -23,8 +23,8 @@ try:
     camera.start_camera(output, frame_size = frame_size, frame_rate = frame_rate)
     
     wsapp = websocket.WebSocketApp(f"ws://{serverHost}/ws/device1/", on_message=on_message)
-    wsapp.run_forever()
-    print ('done')
+    #wsapp.run_forever()
+    Thread(target = wsapp.run_forever).start()
 
     # def run():
     #     # Start the websocket connection
