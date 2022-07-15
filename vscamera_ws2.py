@@ -26,7 +26,8 @@ try:
 
     def run():
         # Start the websocket connection
-        time.sleep(0.3) # Without this delay the websocket callback will not run
+        print ('run')
+        #time.sleep(0.3) # Without this delay the websocket callback will not run
         wsapp.run_forever()
 
     try:
