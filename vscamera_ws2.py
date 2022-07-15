@@ -39,6 +39,7 @@ try:
         wst = None
     finally:
         # Close the websocket connection
+        print ('closing connection')
         wsapp.close()
 
     while True:
