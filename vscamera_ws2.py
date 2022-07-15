@@ -30,7 +30,7 @@ try:
         print ('run')
         time.sleep(1) # Without this delay the websocket callback will not run
         wsapp.run_forever()
-
+        print ('run exit')
     try:
         # Start the websocket connection in new thread
         wst = Thread(target = run)
