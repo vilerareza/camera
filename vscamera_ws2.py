@@ -25,9 +25,9 @@ try:
     wsapp = websocket.WebSocketApp(f"ws://{serverHost}/ws/device1/", on_message=on_message)
     #wsapp.run_forever()
     try:
-        wst = Thread(target = wsapp.run_forever)
-        wst.daemon = True
-        wst.start()
+        Thread(target = wsapp.run_forever).start
+        #wst.daemon = True
+        #wst.start()
     except Exception as e:
         print (f'{e}: Failed starting websocket connection')
         wst = None
