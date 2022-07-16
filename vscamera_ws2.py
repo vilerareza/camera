@@ -24,26 +24,17 @@ try:
     
     wsapp = websocket.WebSocketApp(f"ws://{serverHost}/ws/device1/", on_message=on_message)
     #wsapp.run_forever()
-    Thread(target = wsapp.run_forever).start()
-
-    # def run():
-    #     # Start the websocket connection
-    #     print ('run')
-    #     time.sleep(1) # Without this delay the websocket callback will not run
-    #     wsapp.run_forever()
-    #     print ('run exit')
-    # try:
-    #     # Start the websocket connection in new thread
-    #     wst = Thread(target = run)
-    #     wst.daemon = True
-    #     wst.start()
-    # except Exception as e:
-    #     print (f'{e}: Failed starting websocket connection')
-    #     wst = None
-    # finally:
-    #     # Close the websocket connection
-    #     print ('closing connection')
-    #     wsapp.close()
+    try:
+        wst = Thread(target = wsapp.run_forever)
+        wst.daemon = True
+        wst.start()
+    except Exception as e:
+        print (f'{e}: Failed starting websocket connection')
+        wst = None
+    finally:
+        # Close the websocket connection
+        print ('closing connection')
+        wsapp.close()
 
     # while True:
     #     with output.condition:
