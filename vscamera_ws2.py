@@ -23,10 +23,8 @@ try:
     camera.start_camera(output, frame_size = frame_size, frame_rate = frame_rate)
     
     wsapp = websocket.WebSocketApp(f"ws://{serverHost}/ws/device1/", on_message=on_message)
-    #wsapp.run_forever()
     try:
-        wst = Thread(target = wsapp.run_forever) #.start
-        #wst.daemon = True
+        wst = Thread(target = wsapp.run_forever)
         wst.start()
     except Exception as e:
         print (f'{e}: Failed starting websocket connection')
@@ -34,7 +32,7 @@ try:
     finally:
         # Close the websocket connection
         print ('closing connection')
-        wsapp.close()
+        #wsapp.close()
 
     # while True:
     #     with output.condition:
