@@ -37,7 +37,9 @@ try:
         with output.condition:
             output.condition.wait()
             frame = output.frame
-            wsapp.send(frame) #, opcode=2)
-
+            try:
+                wsapp.send(frame) #, opcode=2)
+            except Exception as e:
+                print(e)
 except Exception as e:
     print (f'{e}: Camera Starting Error')
