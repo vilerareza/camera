@@ -2,7 +2,6 @@ from camera import Camera
 from streamingoutput_basic import StreamingOutput
 from threading import Thread
 import websocket
-import time
 
 # Server host
 serverHost = "192.168.25.102:8000"
@@ -15,6 +14,7 @@ frame_rate = 20
 # Streaming output object
 output = StreamingOutput()
 
+
 def on_message(wsapp, message):
     print (message)
 
@@ -22,8 +22,8 @@ try:
     # Start camera
     camera.start_camera(output, frame_size = frame_size, frame_rate = frame_rate)
     
+    # Websocket App
     wsapp = websocket.WebSocketApp(f"ws://{serverHost}/ws/device1/", on_message=on_message)
-    
     try:
         # Run the websocket in different thread
         wst = Thread(target = wsapp.run_forever)
@@ -32,14 +32,16 @@ try:
         print (f'{e}: Failed starting websocket connection. closing connection')
         wsapp.close()
         wst = None
+    
+    # Websocket
+    ws = websocket.WebSocket()
+    ws.connect(f"ws://{serverHost}/ws/device1/")
 
     while True:
         with output.condition:
             output.condition.wait()
             frame = output.frame
-            try:
-                wsapp.send(frame, opcode=2) #, opcode=2)
-            except Exception as e:
-                print(e)
+            ws.send(frame, opcode=2)
+
 except Exception as e:
     print (f'{e}: Camera Starting Error')
