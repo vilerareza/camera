@@ -38,10 +38,8 @@ class Servo():
                         targetPos = self.kit.servo[0].angle + distance
                     # Move X
                     while self.kit.servo[0].angle <= targetPos:
-                        currentPos = self.kit.servo[0].angle + self.stepDegree
                         self.kit.servo[0].angle += self.stepDegree
                         print (f'targetPos: {targetPos}')
-                        print (f'currentPos: {currentPos}')
                         print (f'posX: {self.kit.servo[0].angle}')
                         time.sleep(self.delayS)
 
@@ -64,7 +62,6 @@ class Servo():
                     while self.kit.servo[0].angle >= targetPos:
                         self.kit.servo[0].angle -= self.stepDegree
                         print (f'targetPos: {targetPos}')
-                        print (f'currentPos: {currentPos}')
                         print (f'posX: {self.kit.servo[0].angle}')
                         time.sleep(self.delayS)
 
