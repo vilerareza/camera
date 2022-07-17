@@ -9,8 +9,8 @@ class Servo():
     #posParam = {'posXMin':0, 'posXMax':180, 'posYMin':0, 'posYMax': 180, 'stepDegree':0.5, 'delayS':0.005}
     posXMin = float(5)
     posXMax = float(175) 
-    posYMin = float(0)
-    posYMax =  float(180) 
+    posYMin = float(5)
+    posYMax =  float(175) 
     stepDegree = float(1.5)
     delayS = float(0.003)
 
@@ -123,3 +123,13 @@ class Servo():
         if not self.moveThread:
             self.moveThread = Thread(target = partial(move_y, distance))
             self.moveThread.start()
+
+    def excercise(self, x_max, x_min):
+        while True:
+            self.start_move_x(85)
+            self.start_move_y(30)
+            self.start_move_x(-85*2)
+            self.start_move_y(-30*2)
+            self.start_move_x(85)
+            self.start_move_y(30)
+
