@@ -124,7 +124,7 @@ class Servo():
             self.moveThread = Thread(target = partial(move_y, distance))
             self.moveThread.start()
 
-    def excercise(self, x_max, x_min):
+    def excercise(self):
         while True:
             self.start_move_x(85)
             self.start_move_y(30)
