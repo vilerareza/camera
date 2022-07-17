@@ -16,6 +16,7 @@ output = StreamingOutput()
 
 
 def on_message(wsapp, message):
+    print('message')
     print (message)
 
 try:
