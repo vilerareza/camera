@@ -22,12 +22,33 @@ class Servo():
         def move_x(distance):
             if distance > 0:
                 # Positive direction
-                if self.kit.servo[0].angle < self.posMax:
+                if self.kit.servo[0].angle < self.posParam['posXMax']:
                     # Still within x movement range
                     # Calculate target position
-                    if (self.currentPos + distance) >= self.posMax:
+                    if (self.currentPos + distance) >= self.posParam['posXMax']:
                         # Limit the movement to max limit.
                         targetPos = self.posParam['posXMax']
+                    else:
+                        targetPos = self.currentPos + distance
+                    # Move X
+                    while self.kit.servo[0].angle <= targetPos:
+                        self.kit.servo[0].angle += self.posParam['stepDegree']
+                        print (f'posX: {self.kit.servo[0].angle}')
+                        time.sleep(self.posParam['delayS'])
+
+                    self.moveThread = None
+                else:
+                    # Dont move, already at max position
+                    self.moveThread = None
+
+            elif distance < 0:
+                # Negative direction
+                if self.kit.servo[0].angle > self.posParam['posXMin']:
+                    # Still within x movement range
+                    # Calculate target position
+                    if (self.currentPos + distance) >= self.posParam['posXMin']:
+                        # Limit the movement to max limit.
+                        targetPos = self.posParam['posXMin']
                     else:
                         targetPos = self.currentPos + distance
                     # Move X
