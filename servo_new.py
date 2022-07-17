@@ -22,7 +22,7 @@ class Servo():
 
     def center(self, center_position = 90):
        self.kit.servo[0].angle = center_position
-       #self.kit.servo[1].angle = center_position
+       self.kit.servo[1].angle = center_position
 
     def start_move_x(self, distance):
         def move_x(distance):
@@ -74,3 +74,52 @@ class Servo():
             self.moveThread = Thread(target = partial(move_x, distance))
             self.moveThread.start()
 
+    def start_move_y(self, distance):
+        def move_y(distance):
+            if distance > 0:
+                # Positive direction
+                if self.kit.servo[1].angle < self.posXMax:
+                    # Still within x movement range
+                    # Calculate target position
+                    if (self.kit.servo[1].angle + distance) >= self.posXMax:
+                        # Limit the movement to max limit.
+                        targetPos = self.posXMax
+                    else:
+                        targetPos = self.kit.servo[1].angle + distance
+                    # Move X
+                    while self.kit.servo[1].angle <= targetPos:
+                        self.kit.servo[1].angle += self.stepDegree
+                        print (f'targetPos: {targetPos}')
+                        print (f'posX: {self.kit.servo[1].angle}')
+                        time.sleep(self.delayS)
+
+                        self.moveThread = None
+                else:
+                    # Dont move, already at max position
+                    self.moveThread = None
+
+            elif distance < 0:
+                # Negative direction
+                if self.kit.servo[1].angle > self.posXMin:
+                    # Still within x movement range
+                    # Calculate target position
+                    if (self.kit.servo[1].angle + distance) <= self.posXMin:
+                        # Limit the movement to max limit.
+                        targetPos = self.posXMin
+                    else:
+                        targetPos = self.kit.servo[1].angle + distance
+                    # Move X
+                    while self.kit.servo[1].angle >= targetPos:
+                        self.kit.servo[1].angle -= self.stepDegree
+                        print (f'targetPos: {targetPos}')
+                        print (f'posX: {self.kit.servo[1].angle}')
+                        time.sleep(self.delayS)
+
+                    self.moveThread = None
+                else:
+                    # Dont move, already at max position
+                    self.moveThread = None
+        # Start the move thread
+        if not self.moveThread:
+            self.moveThread = Thread(target = partial(move_y, distance))
+            self.moveThread.start()
