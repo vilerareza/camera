@@ -11,8 +11,8 @@ class Servo():
     posXMax = float(180) 
     posYMin = float(0)
     posYMax =  float(180) 
-    stepDegree = float(1)
-    delayS = float(0.1)
+    stepDegree = float(3)
+    delayS = float(0.05)
 
     def __init__(self) -> None:
         self.kit = ServoKit(channels = 16)
