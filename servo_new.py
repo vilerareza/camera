@@ -14,9 +14,9 @@ class Servo():
         time.sleep(0.3)
         print ('servo init ok')
 
-    def center(self, center_position = 90):
+    def center(self, center_position = 10):
        self.kit.servo[0].angle = center_position
-       self.kit.servo[1].angle = center_position
+       #self.kit.servo[1].angle = center_position
 
     def start_move_x(self, distance):
         def move_x(distance):
