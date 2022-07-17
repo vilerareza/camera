@@ -12,7 +12,7 @@ class Servo():
     posYMin = float(0)
     posYMax =  float(180) 
     stepDegree = float(0.5)
-    delayS = float(0.005)
+    delayS = float(0.1)
 
 
     def __init__(self) -> None:
