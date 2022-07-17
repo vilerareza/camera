@@ -75,12 +75,12 @@ class Servo():
         Thread(target = partial(move, distance, pos)).start()
 
  
-    def excercise(self):
-        servoX = Servo(channel=0)
-        servoY = Servo(channel=1)
+def excercise():
+    servoX = Servo(channel=0)
+    servoY = Servo(channel=1)
 
-        #while True:
-        print ('movex')
-        servoX.start_move(170)
-        print ('movey')
-        servoY.start_move(25)
+    #while True:
+    print ('movex')
+    servoX.start_move(170)
+    print ('movey')
+    servoY.start_move(25)
