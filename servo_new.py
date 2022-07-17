@@ -128,8 +128,4 @@ class Servo():
         while True:
             self.start_move_x(85)
             self.start_move_y(30)
-            self.start_move_x(-85*2)
-            self.start_move_y(-30*2)
-            self.start_move_x(85)
-            self.start_move_y(30)
 
