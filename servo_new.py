@@ -14,18 +14,21 @@ class Servo():
     stepDegree = float(1.5)
     delayS = float(0.003)
 
-    def __init__(self) -> None:
+    def __init__(self, channel = 0) -> None:
         self.kit = ServoKit(channels = 16)
+        self.channel = channel
         self.center()
         time.sleep(0.3)
         print ('servo init ok')
 
     def center(self, center_position = 90):
-       self.kit.servo[0].angle = center_position
-       self.kit.servo[1].angle = center_position
+       self.kit.servo[self.channel].angle = center_position
 
-    def start_move_x(self, distance):
-        def move_x(distance):
+    def start_move_x(self, distance, target_pos=None):
+        def move_x(distance, target_pos):
+            if target_pos:
+                distance = target_pos - self.kit.servo[self.channel].angle
+        
             if distance > 0:
                 # Positive direction
                 if self.kit.servo[0].angle < self.posXMax:
@@ -64,7 +67,6 @@ class Servo():
                         print (f'targetPos: {targetPos}')
                         print (f'posX: {self.kit.servo[0].angle}')
                         time.sleep(self.delayS)
-
                     self.moveThread = None
                 else:
                     # Dont move, already at max position
@@ -73,7 +75,7 @@ class Servo():
         # if not self.moveThread:
         #     self.moveThread = Thread(target = partial(move_x, distance))
         #     self.moveThread.start()
-        Thread(target = partial(move_x, distance)).start()
+        Thread(target = partial(move_x, distance, target_pos)).start()
 
     def start_move_y(self, distance):
         def move_y(distance):
@@ -127,7 +129,11 @@ class Servo():
         Thread(target = partial(move_y, distance)).start()
 
     def excercise(self):
-        #while True:
-        self.start_move_x(85)
-        self.start_move_y(30)
+        servoX = Servo()
+        ServoY = Servo()
 
+        while self.kit.servo[0].angle <= targetPos:
+            self.kit.servo[0].angle += self.stepDegree
+                        print (f'targetPos: {targetPos}')
+                        print (f'posX: {self.kit.servo[0].angle}')
+                        time.sleep(self.delayS)
