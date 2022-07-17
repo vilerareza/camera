@@ -70,9 +70,10 @@ class Servo():
                     # Dont move, already at max position
                     self.moveThread = None
         # Start the move thread
-        if not self.moveThread:
-            self.moveThread = Thread(target = partial(move_x, distance))
-            self.moveThread.start()
+        # if not self.moveThread:
+        #     self.moveThread = Thread(target = partial(move_x, distance))
+        #     self.moveThread.start()
+        Thread(target = partial(move_x, distance)).start()
 
     def start_move_y(self, distance):
         def move_y(distance):
@@ -120,9 +121,10 @@ class Servo():
                     # Dont move, already at max position
                     self.moveThread = None
         # Start the move thread
-        if not self.moveThread:
-            self.moveThread = Thread(target = partial(move_y, distance))
-            self.moveThread.start()
+        # if not self.moveThread:
+        #     self.moveThread = Thread(target = partial(move_y, distance))
+        #     self.moveThread.start()
+        Thread(target = partial(move_y, distance)).start()
 
     def excercise(self):
         #while True:
