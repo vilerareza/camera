@@ -68,40 +68,43 @@ class Servo():
                 # Dont move, already at min position
                 pass
 
-        # with self.condition:
-        #     Thread(target = partial(move, distance, pos)).start()
-
 def excercise():
+    # Excercise the camera movement to position posX1, posX2, posY1, posY2
     servoX = Servo(channel=0)
     servoY = Servo(channel=1)
+    posX1 = 170
+    posX2 = 10
+    posY1 = 120
+    posY2 = 70
+    centerX = 90
+    centerY = 90
+    nLoop = 5
 
     def runX():
         i = 0
-        while i < 5:
+        while i < nLoop:
             try:
-                print ('movex 170')
-                servoX.start_move(pos = 170)
-                print ('movex 10')
-                servoX.start_move(pos = 10)
+                servoX.start_move(pos = posX1)
+                servoX.start_move(pos = posX2)
             except Exception as e:
                 print (e)
                 break
             i+=1
-        servoX.start_move(pos = 90)
+        # Centering
+        servoX.start_move(pos = centerX)
 
     def runY():
         j = 0
-        while j < 5:
+        while j < nLoop:
             try:
-                print ('movey 115')
-                servoY.start_move(pos = 120)
-                print ('movey 75')
-                servoY.start_move(pos = 70)
+                servoY.start_move(pos = posY1)
+                servoY.start_move(pos = posY2)
             except Exception as e:
                 print (e)
                 break
             j+=1
-        servoY.start_move(pos = 90)
+        # Centering
+        servoY.start_move(pos = centerY)
 
     Thread(target = runX).start()
     Thread(target = runY).start()
