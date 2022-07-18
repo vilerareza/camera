@@ -91,9 +91,9 @@ def excercise():
         while j < 5:
             try:
                 print ('movey 115')
-                servoY.start_move(pos = 115)
+                servoY.start_move(pos = 120)
                 print ('movey 75')
-                servoY.start_move(pos = 75)
+                servoY.start_move(pos = 70)
             except Exception as e:
                 print (e)
                 break
