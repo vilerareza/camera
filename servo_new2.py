@@ -37,13 +37,11 @@ class Servo():
                 else:
                     targetPos = self.kit.servo[self.channel].angle + distance
                 # Move
-                with self.condition:
-                    while self.kit.servo[self.channel].angle <= targetPos:
-                        self.kit.servo[self.channel].angle += self.stepDegree
-                        print (f'targetPos: {targetPos}')
-                        print (f'pos: {self.kit.servo[self.channel].angle}')
-                        time.sleep(self.delayS)
-                    self.condition.notify_all()
+                while self.kit.servo[self.channel].angle <= targetPos:
+                    self.kit.servo[self.channel].angle += self.stepDegree
+                    print (f'targetPos: {targetPos}')
+                    print (f'pos: {self.kit.servo[self.channel].angle}')
+                    time.sleep(self.delayS)
             else:
                 # Dont move, already at max position
                 pass
@@ -59,13 +57,11 @@ class Servo():
                 else:
                     targetPos = self.kit.servo[self.channel].angle + distance
                 # Move
-                with self.condition:
-                    while self.kit.servo[self.channel].angle >= targetPos:
-                        self.kit.servo[self.channel].angle -= self.stepDegree
-                        print (f'targetPos: {targetPos}')
-                        print (f'pos: {self.kit.servo[self.channel].angle}')
-                        time.sleep(self.delayS)
-                    self.condition.notify_all()
+                while self.kit.servo[self.channel].angle >= targetPos:
+                    self.kit.servo[self.channel].angle -= self.stepDegree
+                    print (f'targetPos: {targetPos}')
+                    print (f'pos: {self.kit.servo[self.channel].angle}')
+                    time.sleep(self.delayS)
             else:
                 # Dont move, already at min position
                 pass
@@ -82,12 +78,8 @@ def excercise():
             try:
                 print ('movex 170')
                 servoX.start_move(pos = 170)
-                with servoX.condition:
-                    servoX.condition.wait()
                 print ('movex 10')
                 servoX.start_move(pos = 10)
-                with servoX.condition:
-                    servoX.condition.wait()
             except Exception as e:
                 print (e)
                 break
@@ -97,12 +89,8 @@ def excercise():
             try:
                 print ('movey 115')
                 servoY.start_move(pos = 115)
-                with servoY.condition:
-                    servoY.condition.wait()
                 print ('movey 75')
                 servoY.start_move(pos = 75)
-                with servoY.condition:
-                    servoY.condition.wait()
             except Exception as e:
                 print (e)
                 break
