@@ -87,7 +87,7 @@ def excercise():
                 print (e)
                 break
             i+=1
-        servoX.center()
+        servoX.start_move(pos = 90)
 
     def runY():
         j = 0
@@ -101,7 +101,7 @@ def excercise():
                 print (e)
                 break
             j+=1
-        servoY.center()
+        servoY.start_move(pos = 90)
 
     Thread(target = runX).start()
     Thread(target = runY).start()
