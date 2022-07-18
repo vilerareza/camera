@@ -9,7 +9,7 @@ class Servo():
     posMin = 5
     posMax = 175
     stepDegree = 1
-    delayS = float(0.005)
+    delayS = float(0.001)
 
     def __init__(self, channel = 0) -> None:
         self.kit = ServoKit(channels = 16)
@@ -99,6 +99,6 @@ def excercise():
                 break
             j+=1
 
-    Thread(target = runX).start()
+    #Thread(target = runX).start()
     Thread(target = runY).start()
 
