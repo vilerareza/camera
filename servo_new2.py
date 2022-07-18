@@ -8,8 +8,8 @@ class Servo():
     moveThread = None
     posMin = 5
     posMax = 175
-    stepDegree = 1
-    delayS = float(0.001)
+    stepDegree = 2
+    delayS = float(0.002)
 
     def __init__(self, channel = 0) -> None:
         self.kit = ServoKit(channels = 16)
