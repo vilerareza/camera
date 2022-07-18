@@ -75,7 +75,7 @@ def excercise():
 
     def runX():
         i = 0
-        while i < 10:
+        while i < 5:
             try:
                 print ('movex 170')
                 servoX.start_move(pos = 170)
@@ -87,8 +87,8 @@ def excercise():
             i+=1
 
     def runY():
-        i = 0
-        while i < 10:
+        j = 0
+        while j < 5:
             try:
                 print ('movey 115')
                 servoY.start_move(pos = 115)
@@ -97,7 +97,7 @@ def excercise():
             except Exception as e:
                 print (e)
                 break
-            i+=1
+            j+=1
 
     Thread(target = runX).start()
     Thread(target = runY).start()
