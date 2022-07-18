@@ -80,10 +80,11 @@ def excercise():
     def runX():
         while True:
             try:
-                print ('movex')
+                print ('movex 170')
                 servoX.start_move(pos = 170)
                 with servoX.condition:
                     servoX.condition.wait()
+                print ('movex 10')
                 servoX.start_move(pos = 10)
                 with servoX.condition:
                     servoX.condition.wait()
@@ -93,10 +94,11 @@ def excercise():
     def runY():
         while True:
             try:
-                print ('movey')
+                print ('movey 115')
                 servoY.start_move(pos = 115)
                 with servoY.condition:
                     servoY.condition.wait()
+                print ('movey 75')
                 servoY.start_move(pos = 75)
                 with servoY.condition:
                     servoY.condition.wait()
