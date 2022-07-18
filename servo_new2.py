@@ -8,7 +8,7 @@ class Servo():
     moveThread = None
     posMin = 5
     posMax = 175
-    stepDegree = 5
+    stepDegree = 1
     delayS = float(0.02)
 
     def __init__(self, channel = 0) -> None:
@@ -39,8 +39,8 @@ class Servo():
                 # Move
                 while self.kit.servo[self.channel].angle <= targetPos:
                     self.kit.servo[self.channel].angle += self.stepDegree
-                    print (f'targetPos: {targetPos}')
-                    print (f'pos: {self.kit.servo[self.channel].angle}')
+                    #print (f'targetPos: {targetPos}')
+                    #print (f'pos: {self.kit.servo[self.channel].angle}')
                     time.sleep(self.delayS)
             else:
                 # Dont move, already at max position
@@ -59,8 +59,8 @@ class Servo():
                 # Move
                 while self.kit.servo[self.channel].angle >= targetPos:
                     self.kit.servo[self.channel].angle -= self.stepDegree
-                    print (f'targetPos: {targetPos}')
-                    print (f'pos: {self.kit.servo[self.channel].angle}')
+                    #print (f'targetPos: {targetPos}')
+                    #print (f'pos: {self.kit.servo[self.channel].angle}')
                     time.sleep(self.delayS)
             else:
                 # Dont move, already at min position
