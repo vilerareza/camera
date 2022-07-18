@@ -20,7 +20,8 @@ class Servo():
         print ('servo init ok')
 
     def center(self, center_position = 90):
-       self.kit.servo[self.channel].angle = center_position
+       #self.kit.servo[self.channel].angle = center_position
+        self.start_move(pos = center_position)
 
     def start_move(self, distance = 0, pos=None):
         #def move(distance, pos):
@@ -85,6 +86,7 @@ def excercise():
                 print (e)
                 break
             i+=1
+        servoX.center()
 
     def runY():
         j = 0
@@ -98,6 +100,7 @@ def excercise():
                 print (e)
                 break
             j+=1
+        servoY.center()
 
     Thread(target = runX).start()
     Thread(target = runY).start()
