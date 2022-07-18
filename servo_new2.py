@@ -8,8 +8,8 @@ class Servo():
     moveThread = None
     posMin = float(5)
     posMax = float(175) 
-    stepDegree = float(1.5)
-    delayS = float(0.003)
+    stepDegree = float(1)
+    delayS = float(0.001)
 
     def __init__(self, channel = 0) -> None:
         self.kit = ServoKit(channels = 16)
@@ -74,7 +74,8 @@ def excercise():
     servoY = Servo(channel=1)
 
     def runX():
-        while True:
+        i = 0
+        while i < 20:
             try:
                 print ('movex 170')
                 servoX.start_move(pos = 170)
@@ -83,9 +84,11 @@ def excercise():
             except Exception as e:
                 print (e)
                 break
+            i+=1
 
     def runY():
-        while True:
+        i = 0
+        while i < 20:
             try:
                 print ('movey 115')
                 servoY.start_move(pos = 115)
@@ -94,6 +97,7 @@ def excercise():
             except Exception as e:
                 print (e)
                 break
+            i+=1
 
     Thread(target = runX).start()
     Thread(target = runY).start()
