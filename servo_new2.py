@@ -20,7 +20,7 @@ class Servo():
         print ('servo init ok')
 
     def center(self, center_position = 90):
-       #self.kit.servo[self.channel].angle = center_position
+        self.kit.servo[self.channel].angle = center_position
         print(self.kit.servo[self.channel].angle)
         self.start_move(pos = center_position)
 
