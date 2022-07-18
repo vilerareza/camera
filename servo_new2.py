@@ -88,7 +88,8 @@ def excercise():
                 servoX.start_move(pos = 10)
                 with servoX.condition:
                     servoX.condition.wait()
-            except:
+            except Exception as e:
+                print (e)
                 break
 
     def runY():
@@ -102,7 +103,8 @@ def excercise():
                 servoY.start_move(pos = 75)
                 with servoY.condition:
                     servoY.condition.wait()
-            except:
+            except Exception as e:
+                print (e)
                 break
 
     Thread(target = runX).start()
