@@ -99,6 +99,6 @@ def excercise():
                 break
             j+=1
 
-    #Thread(target = runX).start()
+    Thread(target = runX).start()
     Thread(target = runY).start()
 
