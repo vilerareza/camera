@@ -81,9 +81,9 @@ def excercise():
 
     #while True:
     print ('movex')
-    servoX.start_move(170)
-    servoX.start_move(10)
+    servoX.start_move(pos = 170)
+    servoX.start_move(pos = 10)
     print ('movey')
-    servoY.start_move(75)
-    servoY.start_move(115)
+    servoY.start_move(pos = 75)
+    servoY.start_move(pos = 115)
 
