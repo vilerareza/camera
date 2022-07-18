@@ -6,10 +6,10 @@ from adafruit_servokit import ServoKit
 class Servo():
     # Servo parameter
     moveThread = None
-    posMin = float(5)
-    posMax = float(175) 
-    stepDegree = float(3)
-    delayS = float(0.005)
+    posMin = 5
+    posMax = 175
+    stepDegree = 2
+    delayS = float(0.003)
 
     def __init__(self, channel = 0) -> None:
         self.kit = ServoKit(channels = 16)
