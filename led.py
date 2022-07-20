@@ -19,7 +19,13 @@ def led_cleanup():
 led_init()
 
 while True:
-    led_on()
-    time.sleep(20)
-    led_off()
-    time.sleep(20)
+    try:
+        led_on()
+        time.sleep(20)
+        led_off()
+        time.sleep(20)
+    except:
+        led_off()
+        led_cleanup()
+        print('break')
+        break
